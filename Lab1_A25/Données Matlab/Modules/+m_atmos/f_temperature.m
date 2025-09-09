@@ -31,8 +31,8 @@ km = altitude_m/1000;
 
 if km <= 11
     T_k = (1-2.2558e-5 * altitude_m)*T0_k;
+    theta=T_k/T0_k;
 elseif km > 11 
     T_k = 0.75187*T0_k;
-
-
+    theta=0.75187;
 end
