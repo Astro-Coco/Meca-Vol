@@ -27,5 +27,18 @@ function rho_kgpm3 = f_masse_volumique(altitude_m)
 
 %%% Masse volumique de l'air au niveau de la mer (h = 0)
 rho0_kgpm3 = 1.2250;
+km = altitude_m/1000;
+
+if km <= 11
+    ratio = (1-(2.2558e-5)*altitude_m)^5.25588;
+    rho_kgpm3 = ratio*rho0_kgpm3;
+elseif km > 11 && km <= 20
+    ratio = 0.29708*exp((-1.5768e-4)*(altitude_m-11000));
+    rho_kgpm3 = ratio*rho0_kgpm3;
+else
+    rho_kgpm3 = NaN;
+    warning('Altitude outisde of supported ranges')
+
+
 
 end

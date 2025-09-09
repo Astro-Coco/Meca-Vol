@@ -27,6 +27,6 @@ function qbar_pa = f_pression_dynamique(tas_mps, altitude_m)
 % $ Creation by G. Ghazi$
 % $ Revision: 1.0 $ $Date: 06/29/2017 by G. Ghazi$
 % $ Revision: 2.0 $ $Date: XX/XX/XXXX by "Nom Etudiants"$
-
+qbar_pa = 0.5*m_atmos.masse_volumique(altitude_m)*tas_mps^2;
 
 end
