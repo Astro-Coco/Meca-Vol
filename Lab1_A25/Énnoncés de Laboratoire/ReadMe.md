@@ -1,7 +1,7 @@
 To add folder to path :
 
 ```
-11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+addpath('c:\Users\lambe\Meca-Vol\Lab1_A25\Données Matlab\Modules')
 ```
 
 To run code inside folder :
