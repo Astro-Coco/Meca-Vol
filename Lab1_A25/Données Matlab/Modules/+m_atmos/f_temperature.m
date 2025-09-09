@@ -27,5 +27,12 @@ function T_k  = f_temperature(altitude_m)
 
 %%% Temperature au niveau de la mer (h=0 m)
 T0_k = 288.15;
+km = altitude_m/1000;
+
+if km <= 11
+    T_k = (1-2.2558e-5 * altitude_m)*T0_k;
+elseif km > 11 
+    T_k = 0.75187*T0_k;
+
 
 end
