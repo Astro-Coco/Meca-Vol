@@ -28,5 +28,4 @@ function T_k  = f_temperature(altitude_m)
 %%% Temperature au niveau de la mer (h=0 m)
 T0_k = 288.15;
 
-
 end
