@@ -27,6 +27,7 @@ function a_mps = f_vitesse_son(altitude_m)
 
 %%% Constante des gaz parfait
 R_air = 287.058;
+oui
 gamma_air = 1.4;
 
 end
