@@ -40,9 +40,6 @@ P_pa = 46565 ;
 V_croisiere_kts = 240 ;
 V_croisiere_mps = m_convert.f_velocity( V_croisiere_kts, 'kts', 'm/s');
 
-
-
-
 alt_m = linspace(5000,8000,100);
 
 for i = 1 : length(alt_m)
@@ -50,11 +47,13 @@ for i = 1 : length(alt_m)
 end
 
 
-alt_est_m = interp1(Pression_pa,alt_m,P_pa)
+alt_est_m = interp1(Pression_pa,alt_m,P_pa);
+
+alt_est_ft = m_convert.f_length(alt_est_m,'m','ft');
 
 %%4.2 b
 T_est = m_atmos.f_temperature(alt_est_m);
-rho = m_atmos.f_masse_volumique(alt_est_m) ;
+rho = m_atmos.f_masse_volumique(alt_est_m);
 
 %% 4.2c
 alt_est_m = 1000;
