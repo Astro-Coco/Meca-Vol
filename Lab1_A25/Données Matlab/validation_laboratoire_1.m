@@ -49,7 +49,7 @@ end
 
 alt_est_m = interp1(Pression_pa,alt_m,P_pa);
 
-alt_est_ft = m_convert.f_length(alt_est_m,'m','ft');
+alt_est_ft = m_convert.f_length(alt_est_m,'m','ft')
 
 %%4.2 b
 T_est = m_atmos.f_temperature(alt_est_m);
