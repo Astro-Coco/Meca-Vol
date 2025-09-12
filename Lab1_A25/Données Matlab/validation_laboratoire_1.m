@@ -4,8 +4,10 @@ clear;
 close all;
 
 %%% Organisation des repertoires
-addpath('Aircraft/', 'Modules/');
-
+%addpath('Aircraft/', 'Modules/');
+thisFileDir = fileparts(mfilename('fullpath'));
+addpath(fullfile(thisFileDir, 'Aircraft'));
+addpath(fullfile(thisFileDir, 'Modules')); 
 %% % Debut de vos etudes
 
 %%% Definition d'un vecteur altitude avec un pas de 1,000ft 
@@ -18,7 +20,7 @@ altitude_m = m_convert.f_length(altitude_ft, 'ft', 'm');
 temperature_k = zeros(size(altitude_m));
 
 %%% Calcul de la temperature
-for i = 0 : length(altitude_m);
+for i = 1 : length(altitude_m);
     % Calcul de la temperature;
     temperature_k(i) = m_atmos.f_temperature(altitude_m(i));
 end
@@ -26,5 +28,5 @@ end
 %%% Affichage des resultats
 figure(1); hold on; grid on; box on;
 plot(altitude_m, temperature_k, '-x');
-xlabel("Altitude [$$\times$$1,000ft]", 'interpreter','latex');
-ylabel('Temperature [K]', 'interpretrer', 'latex');
+xlabel('Altitude [$\times$ 1{,}000 ft]', 'Interpreter', 'latex');
+ylabel('Temperature [K]', 'interpreter', 'latex');
