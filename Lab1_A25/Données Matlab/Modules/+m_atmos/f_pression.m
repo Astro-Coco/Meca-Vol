@@ -31,9 +31,10 @@ P0_pa = 101325;
 km = altitude_m/1000;
 
 if km <= 11
-    P_pa = ((1-2.2558e-5*altitude_m)^5.25588)*P0_pa;
-    delta = P_pa/P0_pa;
+    delta = ((1-2.2558e-5*altitude_m)^5.25588);
+    P_pa = P0_pa*delta;
 elseif km > 11 
-    P_pa = (0.22336*exp(-1.5768e-4*(altitude_m-11000)))*P0_pa;
-    delta = P_pa/P0_pa;
+    delta = (0.22336*exp(-1.5768e-4*(altitude_m-11000)));
+    P_pa = delta*P0_pa;
+    
 end

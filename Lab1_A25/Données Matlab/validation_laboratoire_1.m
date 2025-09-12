@@ -8,7 +8,7 @@ addpath('Aircraft/', 'Modules/');
 
 %% % Debut de vos etudes
 
-%%% Definition d'un vecteur altitude avec un pas de 1,000ft
+%%% Definition d'un vecteur altitude avec un pas de 1,000ft 
 altitude_ft = 0 : 1000 : 60000;
 
 %%% Conversion du vecteur d'altitude en m
