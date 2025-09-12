@@ -57,13 +57,12 @@ T_est = m_atmos.f_temperature(alt_est_m);
 rho = m_atmos.f_masse_volumique(alt_est_m) ;
 
 %% 4.2c
-alt_est_m = 1000;
 
 %Calcul de sigma selon les masse volumique en kg/m^2
 %Valeur de base donnée dans la fonction f_pression
 rho0_kgpm3 = 1.2250;
 
-sigma = rho / rho_0_kgpm3;
+sigma = rho / rho0_kgpm3;
 
 %Vérifier que la vitesse attendue est en mps
 Ve = V_croisiere_mps;
@@ -73,14 +72,16 @@ Vt = Ve / sigma^0.5;
 a_son_mps = m_atmos.f_vitesse_son(alt_est_m);
 Mach_number = Vt / a_son_mps;
 
-%%4.2 e
+%% 4.2 e
 T_ISA = T_est;
 delta_ISA = 20;
 T = T_ISA + delta_ISA;
 R_air = 287.058;
 rho_reelle = P_pa/(R_air*T);
 
-%%4.2 f
-sigma_reelle = rho_reelle/rho_0_kgpm3;
-Vt_reelle = Ve/sigma_reelle^0.5;
-Mach_number_reelle = Vt_reelle/a_son_mps;
+%% 4.2 f
+sigma_reelle = rho_reelle/rho0_kgpm3;
+Vt_reelle = Ve/sigma_reelle^0.5
+Mach_number_reelle = Vt_reelle/a_son_mps
+
+
