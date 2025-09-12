@@ -30,3 +30,17 @@ figure(1); hold on; grid on; box on;
 plot(altitude_m, temperature_k, '-x');
 xlabel('Altitude [$\times$ 1{,}000 ft]', 'Interpreter', 'latex');
 ylabel('Temperature [K]', 'interpreter', 'latex');
+
+
+
+%% 4.2 (Kosma)
+
+%% a)
+P_pa = 46,565
+V_croisiere_kts = 240
+V_croisiere_mps = m_convert.f_velocity( V_croisiere_kts, 'kts', 'm/s')
+%%h_alt_ = interp1()
+
+alt_m = linspace(5000,8000,100)
+
+P1 = m_atmos.f_pression(alt_m)
