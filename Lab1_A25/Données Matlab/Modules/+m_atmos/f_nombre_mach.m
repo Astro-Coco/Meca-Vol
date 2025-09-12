@@ -26,10 +26,8 @@ function mach_nb = f_nombre_mach(tas_mps, altitude_m)
 % $ Creation by G. Ghazi$
 % $ Revision: 1.0 $ $Date: 06/29/2017 by G. Ghazi$
 % $ Revision: 2.0 $ $Date: XX/XX/XXXX by "Nom Etudiants"$
-gamma = 1.4;
-R_s = 287;
-a = (gamma*R_s*m_atmos.f_temperature(altitude_m))^0.5;
 
-mach_nb = tas_mps/a;
+
+mach_nb = tas_mps/m_atmos.f_vitesse_son(altitude_m);
 
 end
