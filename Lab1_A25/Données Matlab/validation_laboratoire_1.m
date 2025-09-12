@@ -53,8 +53,8 @@ end
 alt_est_m = interp1(Pression_pa,alt_m,P_pa)
 
 %%4.2 b
-T_est = m_atmos.f_temperature(alt_est_m);
-rho = m_atmos.f_masse_volumique(alt_est_m) ;
+T_est = m_atmos.f_temperature(alt_est_m)
+rho = m_atmos.f_masse_volumique(alt_est_m)
 
 %% 4.2c
 
@@ -66,11 +66,11 @@ sigma = rho / rho0_kgpm3;
 
 %Vérifier que la vitesse attendue est en mps
 Ve = V_croisiere_mps;
-Vt = Ve / sigma^0.5;
+Vt = Ve / sigma^0.5
 
 %% 4.2 d
-a_son_mps = m_atmos.f_vitesse_son(alt_est_m);
-Mach_number = Vt / a_son_mps;
+a_son_mps = m_atmos.f_vitesse_son(alt_est_m)
+Mach_number = Vt / a_son_mps
 
 %% 4.2 e
 T_ISA = T_est;
