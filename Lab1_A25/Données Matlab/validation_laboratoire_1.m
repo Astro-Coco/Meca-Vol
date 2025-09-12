@@ -36,11 +36,18 @@ ylabel('Temperature [K]', 'interpreter', 'latex');
 %% 4.2 (Kosma)
 
 %% a)
-P_pa = 46,565
-V_croisiere_kts = 240
-V_croisiere_mps = m_convert.f_velocity( V_croisiere_kts, 'kts', 'm/s')
-%%h_alt_ = interp1()
+P_pa = 46565 ;
+V_croisiere_kts = 240 ;
+V_croisiere_mps = m_convert.f_velocity( V_croisiere_kts, 'kts', 'm/s');
 
-alt_m = linspace(5000,8000,100)
 
-P1 = m_atmos.f_pression(alt_m)
+
+
+alt_m = linspace(5000,8000,100);
+
+for i = 1 : length(alt_m)
+    Pression_pa(i) = m_atmos.f_pression(alt_m(i));
+end
+
+
+alt_est_m = interp1(Pression_pa,alt_m,P_pa)
