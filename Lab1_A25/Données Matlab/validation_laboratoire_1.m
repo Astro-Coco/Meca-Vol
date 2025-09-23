@@ -7,7 +7,7 @@ close all;
 %addpath('Aircraft/', 'Modules/');
 thisFileDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(thisFileDir, 'Aircraft'));
-addpath(fullfile(thisFileDir, 'Modules')); 
+addpath(fullfile(thisFileDir, 'Modules copy')); 
 %% % Debut de vos etudes
 
 %% % Debut de vos etudes
