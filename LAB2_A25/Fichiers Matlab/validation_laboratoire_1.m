@@ -76,7 +76,7 @@ T_ISA = T_est;
 delta_ISA = 20;
 T = T_ISA + delta_ISA;
 R_air = 287.058;
-rho_reelle = P_pa/(R_air*T);
+rho_reelle = P_pa/(R_air*T)
 
 %% 4.2 f
 sigma_reelle = rho_reelle/rho0_kgpm3;
