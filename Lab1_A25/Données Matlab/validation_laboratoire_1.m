@@ -7,7 +7,7 @@ close all;
 %addpath('Aircraft/', 'Modules/');
 thisFileDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(thisFileDir, 'Aircraft'));
-addpath(fullfile(thisFileDir, 'Modules copy')); 
+addpath(fullfile(thisFileDir, 'Modules')); 
 %% % Debut de vos etudes
 
 %% % Debut de vos etudes
@@ -160,9 +160,9 @@ legend('Location','northwest');
 
 
 
-%% 4.2 
+%% 4.2 (Kosma)
 
-% 4.2 a)
+%% a)
 P_pa = 46565 ;
 V_croisiere_kts = 240 ;
 V_croisiere_mps = m_convert.f_velocity( V_croisiere_kts, 'kts', 'm/s');
@@ -178,11 +178,11 @@ alt_est_m = interp1(Pression_pa,alt_m,P_pa);
 
 alt_est_ft = m_convert.f_length(alt_est_m,'m','ft')
 
-% 4.2 b)
+%%4.2 b
 T_est = m_atmos.f_temperature(alt_est_m)
 rho = m_atmos.f_masse_volumique(alt_est_m)
 
-% 4.2 c)
+%% 4.2c
 
 %Calcul de sigma selon les masse volumique en kg/m^2
 %Valeur de base donnée dans la fonction f_pression
@@ -194,11 +194,11 @@ sigma = rho / rho0_kgpm3;
 Ve = V_croisiere_mps;
 Vt = Ve / sigma^0.5
 
-% 4.2 d)
+%% 4.2 d
 a_son_mps = m_atmos.f_vitesse_son(alt_est_m)
 Mach_number = Vt / a_son_mps
 
-% 4.2 e)
+%% 4.2 e
 T_ISA = T_est;
 delta_ISA = 20;
 T = T_ISA + delta_ISA;

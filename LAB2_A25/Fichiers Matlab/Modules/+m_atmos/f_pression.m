@@ -28,13 +28,17 @@ function P_pa = f_pression(altitude_m)
 %%% Pression au niveau de la mer (h = 0)
 P0_pa = 101325;
 
-km = altitude_m/1000;
+% %%% Conversion de la variable altitude_m en [ft]
+altitude_ft = m_convert.f_length(altitude_m, 'm', 'ft');
 
-if km <= 11
-    delta = ((1-2.2558e-5*altitude_m)^5.25588);
-    P_pa = P0_pa*delta;
-elseif km > 11 
-    delta = (0.22336*exp(-1.5768e-4*(altitude_m-11000)));
-    P_pa = delta*P0_pa;
-    
+%%% Calcul du ratio de temperature (theta)
+if altitude_ft <= 36089.24
+    delta = (1-altitude_ft*6.8756*1e-6)^5.25588;
+else
+    delta = (0.2233*exp(-4.806*1e-5*(altitude_ft-36089.24)));
+end
+
+%%% Calcul de la temperature
+P_pa = delta*P0_pa;
+
 end

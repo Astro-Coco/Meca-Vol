@@ -27,7 +27,6 @@ function mach_nb = f_nombre_mach(tas_mps, altitude_m)
 % $ Revision: 1.0 $ $Date: 06/29/2017 by G. Ghazi$
 % $ Revision: 2.0 $ $Date: XX/XX/XXXX by "Nom Etudiants"$
 
-
 mach_nb = tas_mps/m_atmos.f_vitesse_son(altitude_m);
 
 end
