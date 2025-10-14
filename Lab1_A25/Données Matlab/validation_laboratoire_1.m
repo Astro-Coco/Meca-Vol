@@ -192,7 +192,8 @@ sigma = rho / rho0_kgpm3;
 
 %Vérifier que la vitesse attendue est en mps
 Ve = V_croisiere_mps;
-Vt = Ve / sigma^0.5
+Vt = Ve / sigma^0.5;
+Vt_kts = m_convert.f_velocity(Vt,'m/s','kts')
 
 %% 4.2 d
 a_son_mps = m_atmos.f_vitesse_son(alt_est_m)
@@ -207,7 +208,8 @@ rho_reelle = P_pa/(R_air*T)
 
 %% 4.2 f
 sigma_reelle = rho_reelle/rho0_kgpm3;
-Vt_reelle = Ve/sigma_reelle^0.5
+Vt_reelle = Ve/sigma_reelle^0.5;
+Vt_reelle_kts = m_convert.f_velocity(Vt_reelle, 'm/s', 'kts')
 Mach_number_reelle = Vt_reelle/a_son_mps
 
 
