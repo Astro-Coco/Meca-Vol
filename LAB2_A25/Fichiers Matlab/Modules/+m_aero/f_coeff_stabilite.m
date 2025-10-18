@@ -81,7 +81,7 @@ ct        = fn_n/(qbar_pa*s_wb);
     % Maybe faire interp avec d_cl0.volet et d_cl0.value!
     delta_cl0_flaps = avion.aero.d_cl0.value(dflaps + 1);
 
-    cl_wb = cl0 + delta_cl0_flaps + cla*alpha;
+    cl_wb = cl0 + delta_cl0_flaps + cla*alpha_rad;
 
     % Contribution de la vitesse de tangage Q sur la portance 
     % Ajouter la contribution ici ou dans l'empennage??!?!
@@ -120,7 +120,7 @@ ct        = fn_n/(qbar_pa*s_wb);
     %Contribution des moteurs sur cm0
     delta_cm_mot = avion.aero.cmct * ct;
 
-    cm_wb = cm0 + delta_cm0 + cma*alpha + delta_cmq + delta_cmadot + delta_cm_mot;
+    cm_wb = cm0 + delta_cm0 + cma*alpha_rad + delta_cmq + delta_cmadot + delta_cm_mot;
 %%% Calcul du downwash
     epsilon_deg = avion.aero.eps0 + avion.aero.epsa * alpha_deg;
 
@@ -132,7 +132,7 @@ ct        = fn_n/(qbar_pa*s_wb);
 %%% Calcul de l'angle du stabilisateur
     %Formule du downwash selon alpha et coeff données
     % Angle d'attaque du stabilisateur
-    alpha_h = alpha + dstab_rad + epsilon;
+    alpha_h = alpha_rad + dstab_rad + epsilon;
 
 %%% Calcul des coefficients de l'empennage arriere
     % Coefficient de portance
@@ -164,12 +164,12 @@ ct        = fn_n/(qbar_pa*s_wb);
     % Doute
     cmq = -2 *avion.aero.a1 * vbar_x*l_h / c_wb;
     % Voir page 18 chap 4
-    contribution_stab = (s_ht*c_ht/(s_wb*c_wb))*cmq - (s_ht*x_ht/(s_wb*c_wb))*(clh*cos*(epsilon) - cd_h*sin(epsilon)) + (s_ht*z_ht/(s_wb*c_ht))*(cd_h*cos(epsilon) + clh*sin(epsilon));
+    contribution_stab = (s_ht*c_ht/(s_wb*c_wb))*cmq - (s_ht*x_ht/(s_wb*c_wb))*(clh*cos(epsilon) - cd_h*sin(epsilon)) + (s_ht*z_ht/(s_wb*c_ht))*(cd_h*cos(epsilon) + clh*sin(epsilon));
 
 %%% Expression des coefficients totaux dans le repere stab.
 % Clh normalisé par la surface de l'aile sh/s
-cls = cl_wb + (s_ht/s)*(clh*cos(epsilon) - cd_h*sin(epsilon));
-cds = cd_wb + (s_ht/s)*(cd_h*cos(epsilon) + clh*sin(epsilon));
+cls = cl_wb + (s_ht/s_wb)*(clh*cos(epsilon) - cd_h*sin(epsilon));
+cds = cd_wb + (s_ht/s_wb)*(cd_h*cos(epsilon) + clh*sin(epsilon));
 %cms = cm_wb - vbar_x*cl_h;
 cms = cm_wb + contribution_stab;
 
