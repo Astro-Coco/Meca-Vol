@@ -1,62 +1,64 @@
-function aircraft = f_loadAircraftData()
+function avion = f_loadAircraftData()
 
-%%% Donn?es g?om?triques de l'avion
-% Donn?es de l'aile
-aircraft.geo.Swb = 122.401;                                % [m?]
-aircraft.geo.cwb = 4.1935;                                 % [m]
-aircraft.geo.iwb = conversion(0, 'deg', 'rad');            % [rad]
-% Donn?es de l'empennage arri?re
-aircraft.geo.Sht = 31;                                     % [m?]
-aircraft.geo.cht = 2.7;                                    % [m]
-aircraft.geo.iht = conversion(0, 'deg', 'rad');            % [rad]
-aircraft.geo.xh = 17.59;                                   % [m]
-aircraft.geo.zh = 1.26;                                    % [m]
-% Donn?es du moteur
-aircraft.geo.xm = conversion(9.8, 'ft', 'm');              % [m]
-aircraft.geo.zm = conversion(5.0, 'ft', 'm');              % [m]
-aircraft.geo.im  = conversion(2.0, 'deg', 'rad');          % [rad]
+%%% Donnees geometriques de l'avion
+% Donnees relatives a l'aile de l'avion
+avion.geom.s_wb = 122.401;                                  % [m2]
+avion.geom.c_wb = 4.1935;                                   % [m]
+
+% Donnees relatives a l'empennage arriere
+avion.geom.s_ht = 31;                                       % [m2]
+avion.geom.c_ht = 2.7;                                      % [m]
+avion.geom.x_ht = 17.59;                                    % [m]
+avion.geom.z_ht = 1.26;                                     % [m]
+
+% Donnees relatives aux moteurs
+avion.geom.x_m = m_convert.f_length(9.8, 'ft', 'm');        % [m]
+avion.geom.z_m = m_convert.f_length(5.0, 'ft', 'm');        % [m]
+avion.geom.i_m = m_convert.f_angle(2.0, 'deg', 'rad');      % [rad]
 
 %%% Coefficients aerodynamiques de l'avion
-% Coefficients statiques
-aircraft.aero.CL0  = 0.23;                                % [-]
-aircraft.aero.CLa  = 0.09;                                % [1/deg]
+% Coefficients statiques de l'aile et l'empennage arriere
+avion.aero.cl0  = 0.23;                                     % [-]
+avion.aero.cla  = 0.09;                                     % [1/deg]
 
-aircraft.aero.CD0  = 0.020;                              % [-]
-aircraft.aero.CDCL = 0.0379;                             % [-]
+avion.aero.cd0  = 0.020;                                    % [-]
+avion.aero.cdcl = 0.0379;                                   % [-]
 
-aircraft.aero.Cm0  = -0.11;                               % [-]
-aircraft.aero.Cma  = 0.013;                               % [1/deg]
-aircraft.aero.Cmt  = 0.25;                                % [-]
+avion.aero.cm0  = -0.11;                                    % [-]
+avion.aero.cma  = 0.013;                                    % [1/deg]
+avion.aero.cmct = 0.25;                                     % [-]
 
-aircraft.aero.eps0 = 1.18;                               % [deg]
-aircraft.aero.epsa = 0.37;                               % [-]
+avion.aero.eps0 = 1.18;                                     % [deg]
+avion.aero.epsa = 0.37;                                     % [-]
 
-aircraft.aero.a1   = 3.08;                                 % [1/rad]
-aircraft.aero.a2   = 1.73;                                 % [1/rad]
+avion.aero.a1   = 3.08;                                     % [1/rad]
+avion.aero.a2   = 1.73;                                     % [1/rad]
 
-% Coefficients dynamiques
-aircraft.aero.CLq    = 8.1;                                 % [1/rad]
-aircraft.aero.Cmq    = -24.0;                               % [1/rad]
-aircraft.aero.Cmadot = -1.4;                             % [1/rad]
+% Coefficients dynamiques de l'aile
+avion.aero.clq    = 8.1;                                    % [1/rad]
+avion.aero.cmq    = -24.0;                                  % [1/rad]
+avion.aero.cmadot = -1.4;                                   % [1/rad]
 
-% Variations dues aux volets et nombre de Mach
-aircraft.aero.dCL0.value = [0 0.45 1.01];
-aircraft.aero.dCL0.dFlap = [0 1 2];
+%%% Table de variations dues aux volets et au nombre de Mach
+avion.aero.d_cl0.value = [0 0.45 1.01];
+avion.aero.d_cl0.volet = [0 1 2];
 
-aircraft.aero.rCLa.value = [1.0 1.0 1.05 1.19 1.25 1.34 1.34];
-aircraft.aero.rCLa.Mach  = [0 0.2 0.6 0.7 0.75 0.80 0.85];
+avion.aero.r_cla.value = [1.0 1.0 1.05 1.19 1.25 1.34 1.34];
+avion.aero.r_cla.mach  = [0 0.2 0.6 0.7 0.75 0.80 0.85];
 
-aircraft.aero.dCD0.value = [0  0 0.0025 0.0035 0.0045 0.0055 0.013];
-aircraft.aero.dCD0.Mach  = [0 0.2 0.6 0.7 0.75 0.80 0.85];
+avion.aero.d_cd0.value = [0  0 0.0025 0.0035 0.0045 0.0055 0.013];
+avion.aero.d_cd0.mach  = [0 0.2 0.6 0.7 0.75 0.80 0.85];
 
-aircraft.aero.dCm0.value = [0 -0.17 -0.34];
-aircraft.aero.dCm0.dFlap = [0 1 2];
+avion.aero.d_cm0.value = [0 -0.17 -0.34];
+avion.aero.d_cm0.volet = [0 1 2];
 
-aircraft.aero.rCma.value = [1.0 1.0 1.0 0.97 0.93 0.80 0.43];
-aircraft.aero.rCma.Mach  = [0 0.2 0.6 0.7 0.75 0.80 0.85];
+avion.aero.r_cma.value = [1.0 1.0 1.0 0.97 0.93 0.80 0.43];
+avion.aero.r_cma.mach  = [0 0.2 0.6 0.7 0.75 0.80 0.85];
 
-aircraft.aero.dEps.value = [0 2.36 3.55];
-aircraft.aero.dEps.dFlap = [0 1 2];
+avion.aero.d_eps.value = [0 2.36 3.55];
+avion.aero.d_eps.volet = [0 1 2];
 
-%%% Donn?es massiques (inertie Iyy) de L'avion
-aircraft.inertie.Iyy = conversion(1.766e10, 'lb.in2', 'kg.m2');
+%%% Moment d'inertie de l'avion autour de l'axe y
+avion.inertie.Iyy_kgm2 = m_convert.f_mass(1.766e10, 'lbm', 'kg');
+avion.inertie.Iyy_kgm2 = m_convert.f_length(avion.inertie.Iyy_kgm2, 'in', 'm');
+avion.inertie.Iyy_kgm2 = m_convert.f_length(avion.inertie.Iyy_kgm2, 'in', 'm');

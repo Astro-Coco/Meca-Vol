@@ -10,6 +10,9 @@ addpath(fullfile(thisFileDir, 'Aircraft'));
 addpath(fullfile(thisFileDir, 'Modules')); 
 %% % Debut de vos etudes
 
+
+avion = f_loadAircraftData;
+
 %% 1.1 a)
 
 % 1.1 b)
