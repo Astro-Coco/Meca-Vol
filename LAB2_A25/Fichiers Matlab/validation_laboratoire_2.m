@@ -15,6 +15,7 @@ avion = f_loadAircraftData;
 
 %% 1.1 a)
 
+
 % 1.1 b)
 
 % 1.1 c) PAS À FAIRE

@@ -66,6 +66,20 @@ ct        = fn_n/(qbar_pa*s_wb);
 
 %%% Calcul des coefficients de l'aile
     % Coefficient de portance
+    cl0 = avion.aero.cl0;
+    cla = avion.aero.cla;
+
+    % Effet du nombre de Mach sur le coefficient de portance (Ratio par interpolation)
+    cla = cla * interp1(avion.aero.r_cla.mach, avion.aero.r_cla.value, mach_nb, 'linear', 'extrap');
+
+    % J'assume ici une valeur de 0, 1, 2 pour dflaps, possible interp1
+    % Maybe faire interp avec d_cl0.volet et d_cl0.value!
+    delta_cl0 = avion.aero.d_cl0.value(dflaps + 1);
+
+    cl_wb = cl0 + delta_clo0 + cla*alpha
+
+    % Contribution de la vitesse de tangage Q sur la portance 
+    % Contribution négligeable de Q sur alpha, mais pas sur alpha H, voir autre section
 
     % Coefficient de tra?n?e
 
@@ -77,13 +91,31 @@ ct        = fn_n/(qbar_pa*s_wb);
 
 %%% Calcul des coefficients de l'empennage arriere
     % Coefficient de portance
+    %Formule du downwash selon alpha et coeff données
+    epsilon_deg = avion.aero.eps0 + avion.aero.epsa * alpha_deg;
+    epsilon = m_convert.f_angle(epsilon_deg, 'deg', 'rad');
+    % Angle d'attaque du stabilisateur
+    alpha_h = alpha + dstab_rad + epsilon;
+
+    %Existe aussi une formule combinée voir p21 chap 4, mais semble équivalent
+    %Coefficient de portance de l'empennage, selon alpha_h et deflection stab
+    clh = avion.aero.a1*alpha_h + avion.aero.a2*delev_rad;
+
+    %Contribution de la vitese de tangage Q
+    % Possible correction à faire ici, l_h semble entre donnée par rapport au centre de masse
+    l_h = x_ht; %Distance entre les quarts de cordes aile / empennnage
+    V = tas_mps; % Vitesse vraie
+    Q = q_radps; % Vitesse de tangage
+
+    delta_clah = Q*l_h/V;
 
     % Coefficient de tra?n?e
 
     % Coefficient de moment de tangage
 
 %%% Expression des coefficients totaux dans le repere stab.
-cls = cl_wb + %... ;
+% Clh normalisé par la surface de l'aile sh/s
+cls = cl_wb + (s_ht/s)*cl_h;
 cds = cd_wb + %... ;
 cms = cm_wb + %... ;
 
