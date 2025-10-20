@@ -132,7 +132,7 @@ ct        = fn_n/(qbar_pa*s_wb);
 %%% Calcul de l'angle du stabilisateur
     %Formule du downwash selon alpha et coeff données
     % Angle d'attaque du stabilisateur
-    alpha_h = alpha_rad + dstab_rad + epsilon;
+    alpha_h = alpha_rad + dstab_rad - epsilon;
 
 %%% Calcul des coefficients de l'empennage arriere
     % Coefficient de portance
@@ -157,7 +157,8 @@ ct        = fn_n/(qbar_pa*s_wb);
     % Coefficient de tra?n?e
     % Soit on considère négligeable, soit on considère la trainée basée sur la trainée totale
     % Je vote option 2 pour l'instant, avec le même cdcl que l'aile
-    cd_h = cdcl*clh^2;
+    %cd_h = cdcl*clh^2;
+    cd_h = 0
 
     % Coefficient de moment de tangage
     % Formule p70 chap 4
