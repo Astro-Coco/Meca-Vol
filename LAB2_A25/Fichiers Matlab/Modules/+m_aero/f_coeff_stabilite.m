@@ -90,8 +90,9 @@ ct        = fn_n/(qbar_pa*s_wb);
     delta_clq = clq * q_hat;
 
     cl_wb = cl_wb + delta_clq;
+   
+   
     % Coefficient de tra?n?e
-
     cd0 = avion.aero.cd0;
     cdcl = avion.aero.cdcl;
 
@@ -121,6 +122,8 @@ ct        = fn_n/(qbar_pa*s_wb);
     delta_cm_mot = avion.aero.cmct * ct;
 
     cm_wb = cm0 + delta_cm0 + cma*alpha_rad + delta_cmq + delta_cmadot + delta_cm_mot;
+
+    
 %%% Calcul du downwash
     epsilon_deg = avion.aero.eps0 + avion.aero.epsa * alpha_deg;
 
