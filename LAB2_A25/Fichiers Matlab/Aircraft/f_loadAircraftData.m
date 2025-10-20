@@ -61,3 +61,4 @@ avion.aero.d_eps.volet = [0 1 2];
 %%% Moment d'inertie de l'avion autour de l'axe y
 avion.inertie.Iyy_kgm2 = m_convert.f_mass(1.766e10, 'lbm', 'kg');
 avion.inertie.Iyy_kgm2 = m_convert.f_length(avion.inertie.Iyy_kgm2, 'in', 'm');
+avion.inertie.Iyy_kgm2 = m_convert.f_length(avion.inertie.Iyy_kgm2, 'in', 'm');

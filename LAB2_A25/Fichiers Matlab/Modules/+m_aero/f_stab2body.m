@@ -30,6 +30,9 @@ function [clb, cdb, cmb] = f_stab2body(cls, cds, cms, alpha_rad)
 % $ Creation by H.bensalah
 % $ Revision: 1.0 $ $Date: 06/29/2017 by G. Ghazi$
 
+cdb = cds*cos(alpha_rad) - cls*sin(alpha_rad);
+clb = cds*sin(alpha_rad) + cls*cos(alpha_rad);
+cmb = cms;
 
 
 end

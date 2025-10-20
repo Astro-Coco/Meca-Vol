@@ -206,7 +206,7 @@ T = T_ISA + delta_ISA;
 R_air = 287.058;
 rho_reelle = P_pa/(R_air*T)
 
-%% 4.2 f
+% 4.2 f)
 sigma_reelle = rho_reelle/rho0_kgpm3;
 Vt_reelle = Ve/sigma_reelle^0.5;
 Vt_reelle_kts = m_convert.f_velocity(Vt_reelle, 'm/s', 'kts')
