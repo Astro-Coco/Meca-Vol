@@ -9,16 +9,6 @@ thisFileDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(thisFileDir, 'Aircraft'));
 addpath(fullfile(thisFileDir, 'Modules'));
 %% % Debut de vos etudes
-
-% Recuperation de la surface de l'aile
-s_wb = avion.geom.s_wb;
-
-% Recuperation du coefficient de portance CL0
-CL0 = avion.aero.cl0;
-
-% Recuperation du moment d'inertie Iyy de l'avion
-Iyy = avion.inertie.Iyy_kgm2;
-
 avion = f_loadAircraftData;
 
 function plot_coeff(alphas, CLb, CDb, CMb)
