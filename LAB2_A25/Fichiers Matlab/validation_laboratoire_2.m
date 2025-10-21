@@ -195,7 +195,7 @@ plot(alphas, CMS_mat.', 'LineWidth', 1.2);
 xlabel('alpha (deg)'); ylabel('C_{m_s}');
 grid on;
 legend(legend_entries, 'Location','best');
-title('C_{M_s} vs \alpha pour différents It');
+title('C_{m_s} vs \alpha pour différents It');
 
 
 %TODOOOOOOOOOOOO
