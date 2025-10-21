@@ -158,7 +158,7 @@ CMs = 0
 
 % 3.3 b) sweep du stabilisateur, et alpha, graphs en fonctions de alpha, voir Cl et Cm
 dflap = 0;                        
-alphas = linspace(-5,10,25);   
+alphas = linspace(-5,18,25);   
 alpha_rads = m_convert.f_angle(alphas,'deg','rad');
 
 delta_it_deg = linspace(-6,2,9);           % Positions des stab
