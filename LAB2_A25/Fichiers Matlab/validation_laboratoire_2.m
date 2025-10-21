@@ -126,7 +126,7 @@ plot(alphas, cl_matrix.', '-o', 'LineWidth', 1.2); % each row -> one curve
 xlabel('Angle of attack \alpha (deg)');
 ylabel('CL_{stall}');
 grid on;
-legend(arrayfun(@(d) sprintf('\\delta_s=%g', d), deltas_s, 'UniformOutput', false), 'Location', 'best');
+legend(arrayfun(@(d) sprintf('\\delta_s=%g^{\\circ}', d), deltas_s, 'UniformOutput', false), 'Location', 'best');
 title('CL_{stall} vs \alpha for different \delta_s');
 
 % 3.2 d)
