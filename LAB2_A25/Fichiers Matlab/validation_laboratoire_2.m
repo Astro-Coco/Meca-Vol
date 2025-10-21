@@ -73,6 +73,7 @@ qbar_pa = m_atmos.f_pression_dynamique(V_mps, h_m);
 dflap_a = 0;
 [CLb, CDb, CMb, CLs, CDs, CMs] = coeff_from_flap(alpha_rads, alpha_dot, q, V_mps, mach, qbar_pa, delta_e, dflap_a, delta_it, Fn, avion);
 plot_coeff(alphas, CLs, CDs, CMs)
+
 % 3.1 b)
 dflaps = [0 1 2];
 
@@ -87,8 +88,6 @@ dflap_c = 0;
 plot_coeff(alphas, CLb, CDb, CMb)
 
 %% 3.2 a)
-
-
 alphas = linspace(-5,18, 25);
 delta_s = 0;
 
@@ -109,6 +108,7 @@ xlabel('Angle of attack \alpha (deg)');
 ylabel('CL_stall');
 grid on;
 title('C_l vs \alpha');
+
 % 3.2 b)
 [cl_max, idx_max] = max(cls);   % idx_max is index of first maximum automatically
 alpha_at_clmax = alphas(idx_max);
@@ -146,7 +146,7 @@ g = 9.81;
 
 delta_f = 0;
 delta_e = 0;
-delta_it = linspace(-6, 2, 20);
+delta_it = linspace(-6,2,9);
 
 gamma_deg = -3;
 gamma = m_convert.f_angle(gamma_deg, 'deg', 'rad');
@@ -155,13 +155,13 @@ Q = m_atmos.f_pression_dynamique(V_mps, h_m);
 CLs = m*g*cos(gamma)/(avion.geom.s_wb*Q);
 CMs = 0;
 
-% 3.3 b)
+
 % 3.3 b) sweep du stabilisateur, et alpha, graphs en fonctions de alpha, voir Cl et Cm
 dflap = 0;                        
 alphas = linspace(-5,18,25);   
 alpha_rads = m_convert.f_angle(alphas,'deg','rad');
 
-delta_it_deg = linspace(-6,2,20);           % Positions des stab
+delta_it_deg = linspace(-6,2,9);           % Positions des stab
 delta_it_rad = m_convert.f_angle(delta_it_deg,'deg','rad');
 
 % Construction des matrices de CLS et CMS
