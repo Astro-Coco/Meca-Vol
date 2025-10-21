@@ -152,13 +152,13 @@ gamma_deg = -3;
 gamma = m_convert.f_angle(gamma_deg, 'deg', 'rad');
 
 Q = m_atmos.f_pression_dynamique(V_mps, h_m);
-CLs = m*g*cos(gamma)/(avion.geom.s_wb*Q);
-CMs = 0;
+CLs = m*g*cos(gamma)/(avion.geom.s_wb*Q)
+CMs = 0
 
 
 % 3.3 b) sweep du stabilisateur, et alpha, graphs en fonctions de alpha, voir Cl et Cm
 dflap = 0;                        
-alphas = linspace(-5,18,25);   
+alphas = linspace(-5,10,25);   
 alpha_rads = m_convert.f_angle(alphas,'deg','rad');
 
 delta_it_deg = linspace(-6,2,9);           % Positions des stab
