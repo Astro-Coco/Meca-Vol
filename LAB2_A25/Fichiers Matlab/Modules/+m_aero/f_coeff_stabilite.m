@@ -149,8 +149,6 @@ ct        = fn_n/(qbar_pa*s_wb);
     clh = avion.aero.a1*(alpha_h + delta_ah) + avion.aero.a2*delev_rad;
 
 
-
-
     % Coefficient de trainé
     cd_h = cdcl*clh^2;
 
@@ -162,7 +160,6 @@ ct        = fn_n/(qbar_pa*s_wb);
 % Clh normalisé par la surface de l'aile sh/s
 cls = cl_wb + (s_ht/s_wb)*(clh*cos(epsilon) - cd_h*sin(epsilon));
 cds = cd_wb + (s_ht/s_wb)*(cd_h*cos(epsilon) + clh*sin(epsilon));
-%cms = cm_wb - vbar_x*cl_h;
 cms = cm_wb + contribution_stab;
 
 end
