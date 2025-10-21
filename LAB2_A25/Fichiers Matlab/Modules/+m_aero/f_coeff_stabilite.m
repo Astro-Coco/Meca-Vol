@@ -160,8 +160,8 @@ ct        = fn_n/(qbar_pa*s_wb);
     % Coefficient de tra?n?e
     % Soit on considère négligeable, soit on considère la trainée basée sur la trainée totale
     % Je vote option 2 pour l'instant, avec le même cdcl que l'aile
-    %cd_h = cdcl*clh^2;
-    cd_h = 0
+    cd_h = cdcl*clh^2
+    %cd_h = 0
 
     % Coefficient de moment de tangage
     % Formule p70 chap 4
