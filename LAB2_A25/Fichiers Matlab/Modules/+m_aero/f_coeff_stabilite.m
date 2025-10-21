@@ -55,7 +55,7 @@ z_ht = avion.geom.z_ht;
 %%% Calculs des volumes de references de la queue
 vbar_x = s_ht*x_ht/(s_wb*c_wb);
 
-%Sert à quoi??
+
 % Possible erreur de c, aurait du etre c_ht pour être utilisée pour calculer Cmh
 vbar_z = s_ht*z_ht/(s_wb*c_wb);
 
@@ -78,13 +78,11 @@ ct        = fn_n/(qbar_pa*s_wb);
     cla = cla * interp1(avion.aero.r_cla.mach, avion.aero.r_cla.value, mach_nb, 'linear', 'extrap');
 
     % J'assume ici une valeur de 0, 1, 2 pour dflaps, possible interp1
-    % Maybe faire interp avec d_cl0.volet et d_cl0.value!
     delta_cl0_flaps = avion.aero.d_cl0.value(dflaps + 1);
 
     cl_wb = cl0 + delta_cl0_flaps + cla*alpha_rad;
 
     % Contribution de la vitesse de tangage Q sur la portance 
-    % Ajouter la contribution ici ou dans l'empennage??!?!
     clq = avion.aero.clq;
     %Clq * Q = delta_clq
     delta_clq = clq * q_hat;
@@ -96,7 +94,6 @@ ct        = fn_n/(qbar_pa*s_wb);
     cd0 = avion.aero.cd0;
     cdcl = avion.aero.cdcl;
 
-    % k = 1/(e*AR) = cdcl; e = (cdcl*AR)^-1
 
     delta_cd0 = interp1(avion.aero.d_cd0.mach, avion.aero.d_cd0.value, mach_nb, 'linear', 'extrap');
     cd_wb = cd0 + delta_cd0 + cdcl*cl_wb^2; %Juste WB or whole?
@@ -140,12 +137,9 @@ ct        = fn_n/(qbar_pa*s_wb);
 %%% Calcul des coefficients de l'empennage arriere
     % Coefficient de portance
 
-    %Existe aussi une formule combinée voir p21 chap 4, mais semble équivalent
     %Coefficient de portance de l'empennage, selon alpha_h et deflection stab
 
     %Contribution de la vitese de tangage Q
-    % Possible correction à faire ici, l_h semble entre donnée par rapport au centre de masse
-    %Je pense quart de corde et cg aligné
     l_h = x_ht; %Distance entre les quarts de cordes aile / empennnage
     V = tas_mps; % Vitesse vraie
     Q = q_hat; % Vitesse de tangage
@@ -155,26 +149,17 @@ ct        = fn_n/(qbar_pa*s_wb);
     clh = avion.aero.a1*(alpha_h + delta_ah) + avion.aero.a2*delev_rad;
 
 
-
-    %% REVOIR TRAINÉE ET MOMENT EMP %%
-    % Coefficient de tra?n?e
-    % Soit on considère négligeable, soit on considère la trainée basée sur la trainée totale
-    % Je vote option 2 pour l'instant, avec le même cdcl que l'aile
-    cd_h = cdcl*clh^2
-    %cd_h = 0
+    % Coefficient de trainé
+    cd_h = cdcl*clh^2;
 
     % Coefficient de moment de tangage
-    % Formule p70 chap 4
-    % Doute
     cmq = -2 *avion.aero.a1 * vbar_x*l_h / c_wb;
-    % Voir page 18 chap 4
-    contribution_stab = (s_ht*c_ht/(s_wb*c_wb))*cmq - (s_ht*x_ht/(s_wb*c_wb))*(clh*cos(epsilon) - cd_h*sin(epsilon)) + (s_ht*z_ht/(s_wb*c_ht))*(cd_h*cos(epsilon) + clh*sin(epsilon));
+    contribution_stab = (s_ht*c_ht/(s_wb*c_wb))*cmq - vbar_x*(clh*cos(epsilon) - cd_h*sin(epsilon)) + vbar_z*(cd_h*cos(epsilon) + clh*sin(epsilon));
 
 %%% Expression des coefficients totaux dans le repere stab.
 % Clh normalisé par la surface de l'aile sh/s
 cls = cl_wb + (s_ht/s_wb)*(clh*cos(epsilon) - cd_h*sin(epsilon));
 cds = cd_wb + (s_ht/s_wb)*(cd_h*cos(epsilon) + clh*sin(epsilon));
-%cms = cm_wb - vbar_x*cl_h;
 cms = cm_wb + contribution_stab;
 
 end
