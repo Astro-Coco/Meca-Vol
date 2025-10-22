@@ -190,6 +190,32 @@ legend_entries = arrayfun(@(d) sprintf('\\delta_{it}=%g°', d), delta_it_deg, 'U
 legend([legend_entries, {'C_{L,req}'}], 'Location','best');
 title('C_{L_s} vs \alpha pour différents It');
 
+target_CL = 0.2606; % valeur horizontale à intersecter
+
+% Récupérer les lignes correspondantes dans CLS_mat
+it_values = [-4, 2];
+alpha_intersections = zeros(size(it_values));
+
+hold on;
+yline(target_CL, '--k', 'LineWidth', 1.2, 'DisplayName', sprintf('C_{L_s} = %.4f', target_CL));
+
+for k = 1:length(it_values)
+    [~, idx] = min(abs(delta_it_deg - it_values(k)));
+    CLS_curve = CLS_mat(idx, :);
+        if any((CLS_curve - target_CL) == 0)
+        alpha_cross = alphas(CLS_curve == target_CL);
+    else
+        alpha_cross = interp1(CLS_curve, alphas, target_CL, 'linear', 'extrap');
+    end
+    alpha_intersections(k) = alpha_cross;
+    xline(alpha_cross, '--', sprintf('\\alpha_{it=%d°}=%.2f°', it_values(k), alpha_cross), ...
+          'LineWidth', 1.2, 'DisplayName', sprintf('\\alpha_{it=%d°}', it_values(k)));
+end
+
+for k = 1:length(it_values)
+    fprintf('delta_it = %+d° : alpha = %.3f°\n', it_values(k), alpha_intersections(k));
+end
+
 subplot(2,1,2);
 plot(alphas, CMS_mat.', 'LineWidth', 1.2);
 xlabel('alpha (deg)'); ylabel('C_{m_s}');
