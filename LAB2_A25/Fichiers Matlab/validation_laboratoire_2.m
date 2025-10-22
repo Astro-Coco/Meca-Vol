@@ -161,7 +161,7 @@ dflap = 0;
 alphas = linspace(-5,18,25);   
 alpha_rads = m_convert.f_angle(alphas,'deg','rad');
 
-delta_it_deg = linspace(-6,2,9);           % Positions des stab
+delta_it_deg = linspace(-4,2,7);           % Positions des stab
 delta_it_rad = m_convert.f_angle(delta_it_deg,'deg','rad');
 
 % Construction des matrices de CLS et CMS
@@ -197,10 +197,3 @@ grid on;
 legend(legend_entries, 'Location','best');
 title('C_{m_s} vs \alpha pour différents It');
 
-
-%TODOOOOOOOOOOOO
-% 3.3 c)
-
-% 3.3 d)
-
-% 3.3 e)
