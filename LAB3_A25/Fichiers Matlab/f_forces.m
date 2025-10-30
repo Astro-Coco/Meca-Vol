@@ -50,6 +50,14 @@ zEngine2Cg = avion.geom.z_m - zcg_m;
 alpha_deg = 5;
 alpha = m_convert.f_angle(alpha_deg, 'deg', 'rad');
 
+%%% Definition de variables 
+[cls, cds, cms, clh, cd_h, epsilon] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
+    q_radps, tas_mps, mach_nb, qbar_pa, delev_rad, dflaps, dstab_rad, ...
+    fn_n, avion);
+
+disp(clh)
+
+
 %%% Calcul des forces
 % 1 -> inertielles (poids)
 Fp_x = -m*g*sin(theta_rad);
@@ -65,9 +73,6 @@ Mm_y = Fn_x*xEngine2Cg-Fm_z*zEngine2Cg;
 % Récupérer les variables
 s_ht = avion.geom.s_ht;
 s_wb = avion.geom.s_wb;
-cl_h = m_aero.f_coeff_stabilite.clh;
-epsilon = m_aero.f_coeff_stabilite.epsilon;
-cd_h = m_aero.f_coeff_stabilite.cd_h;
 
 Fa_x = qbar_pa * avion.geom.s_wb * ( ...
     (clb + s_ht/s_wb * (cl_h * cos(epsilon) - cd_h * sin(epsilon))) * sin(alpha) ...
