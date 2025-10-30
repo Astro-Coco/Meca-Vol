@@ -55,7 +55,6 @@ z_ht = avion.geom.z_ht;
 %%% Calculs des volumes de references de la queue
 vbar_x = s_ht*x_ht/(s_wb*c_wb);
 
-
 % Possible erreur de c, aurait du etre c_ht pour être utilisée pour calculer Cmh
 vbar_z = s_ht*z_ht/(s_wb*c_wb);
 
