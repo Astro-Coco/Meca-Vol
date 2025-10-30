@@ -46,21 +46,36 @@ g0 = 9.81;
 xEngine2Cg = avion.geom.x_m + xcg_perc*avion.geom.c_wb;
 zEngine2Cg = avion.geom.z_m - zcg_m;
 
+%%% Defintion de l'angle d'attaque (alpha) en rad
+alpha_deg = m_aero.f_coeff_stabilite.alpha_deg
+alpha = m_convert.f_angle(alpha_deg, 'deg', 'rad');
+
 %%% Calcul des forces
 % 1 -> inertielles (poids)
-Fp_x = 
-Fp_z = 
-Mp_y = 
+Fp_x = -m*g*sin(theta_rad)
+Fp_z = m*g*cos(theta_rad)
+Mp_y = 0
 
 % 2 -> propulives
-Fm_x = 
-Fm_z = 
-Mm_y = 
+Fm_x = fn_n*cos(alpha)
+Fm_z = fn_n*sin(alpha)
+Mm_y = Fn_x*xEngine2Cg-Fm_z*zEngine2Cg
 
 % 3 -> aerodynamiques
-Fa_x = 
-Fa_z = 
-Ma_y = 
+% Récupérer les variables
+s_ht = avion.geom.s_ht
+s_wb = avion.geom.s_wb
+cl_h = m_aero.f_coeff_stabilite.clh
+epsilon = m_aero.f_coeff_stabilite.epsilon
+cd_h = m_aero.f_coeff_stabilite.cd_h
+
+Fa_x = qbar_pa * avion.geom.s_wb * ( ...
+    (clb + s_ht/s_wb * (cl_h * cos(epsilon) - cd_h * sin(epsilon))) * sin(alpha) ...
+    - (cdb + s_ht/s_wb *(cd_h*cos(epsilon) + cl_h*sin(epsilon)))* cos(alpha));
+Fa_z = -qbar_pa * avion.geom.s_wb * ( ...
+    (cdb + s_ht/s_wb * (cd_h * cos(epsilon) + cl_h * sin(epsilon))) * sin(alpha) ...
+    + (clb + s_ht/s_wb *(cl_h*cos(epsilon) + cdh*sin(epsilon)))* cos(alpha));
+Ma_y = qbar_pa*avion.geom.s_wb*cmb*avion.geom.c_wb-Fa_x*zcg_m-Fa_z*(0.25*avion.geom.c_wb-xcg_perc*avion.geom.c_wb)
 
 %%% Bilan des forces dans le repere avion
 fx_n  = Fp_x + Fa_x + Fm_x ;
