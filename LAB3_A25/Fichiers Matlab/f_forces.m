@@ -46,10 +46,6 @@ g0 = 9.81;
 xEngine2Cg = avion.geom.x_m + xcg_perc*avion.geom.c_wb;
 zEngine2Cg = avion.geom.z_m - zcg_m;
 
-%%% Defintion de l'angle d'attaque (alpha) en rad
-alpha_deg = 5;
-alpha = m_convert.f_angle(alpha_deg, 'deg', 'rad');
-
 %%% Variables de sortie de la fonction f_coeff_stabilite
 [cls, cds, cms, clh, cd_h, epsilon] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
     q_radps, tas_mps, mach_nb, qbar_pa, delev_rad, dflaps, dstab_rad, ...
@@ -58,8 +54,8 @@ alpha = m_convert.f_angle(alpha_deg, 'deg', 'rad');
 
 %%% Calcul des forces
 % 1 -> inertielles (poids)
-Fp_x = -m*g*sin(theta_rad);
-Fp_z = m*g*cos(theta_rad);
+Fp_x = -masse_kg*g0*sin(theta_rad);
+Fp_z = masse_kg*g0*cos(theta_rad);
 Mp_y = 0;
 
 % 2 -> propulives
