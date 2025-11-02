@@ -45,12 +45,16 @@ function [cls, cds, cms] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
 % Donnees relative a l'aile (wb = wing + body)
 s_wb = avion.geom.s_wb;
 c_wb = avion.geom.c_wb;
+
 % Donnees relatives a l'empennage arriere (ht = horizontal tail)
 s_ht = avion.geom.s_ht;
 c_ht = avion.geom.c_ht;
 
 x_ht = avion.geom.x_ht;
 z_ht = avion.geom.z_ht;
+
+a1 = avion.aero.a1
+a2 = avion.aero.a2
 
 %%% Calculs des volumes de references de la queue
 vbar_x = s_ht*x_ht/(s_wb*c_wb);
@@ -127,7 +131,7 @@ ct        = fn_n/(qbar_pa*s_wb);
     % Correction du downwash selon la deflection des volets
     delta_eps_downwash = avion.aero.d_eps.value(dflaps + 1);
     epsilon_deg = epsilon_deg + delta_eps_downwash;
-    epsilon = m_convert.f_angle(epsilon_deg, 'deg', 'rad');
+    eps_rad = m_convert.f_angle(epsilon_deg, 'deg', 'rad');
 
 %%% Calcul de l'angle du stabilisateur
     %Formule du downwash selon alpha et coeff données
@@ -141,7 +145,10 @@ cdht = 0;
 % Coefficient de moment de tangage est nul
 cmht = 0;
 
-%% %on ne tient pas compte du fait que eps est petit
+% Coefficient de portance de l'empennage
+clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_eps_downwash)*cos(eps_rad)
+
+%%% On ne tient pas compte du fait que eps est petit
 
 % Coefficients de portance pour l'empennage  CL_H
 CL_H = s_ht/s_wb*(clht*cos(eps_rad) - cdht*sin(eps_rad));
