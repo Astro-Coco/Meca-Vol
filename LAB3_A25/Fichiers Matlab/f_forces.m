@@ -50,12 +50,10 @@ zEngine2Cg = avion.geom.z_m - zcg_m;
 alpha_deg = 5;
 alpha = m_convert.f_angle(alpha_deg, 'deg', 'rad');
 
-%%% Definition de variables 
+%%% Variables de sortie de la fonction f_coeff_stabilite
 [cls, cds, cms, clh, cd_h, epsilon] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
     q_radps, tas_mps, mach_nb, qbar_pa, delev_rad, dflaps, dstab_rad, ...
     fn_n, avion);
-
-disp(clh)
 
 
 %%% Calcul des forces
@@ -67,7 +65,7 @@ Mp_y = 0;
 % 2 -> propulives
 Fm_x = fn_n*cos(alpha);
 Fm_z = fn_n*sin(alpha);
-Mm_y = Fn_x*xEngine2Cg-Fm_z*zEngine2Cg;
+Mm_y = Fm_x*xEngine2Cg-Fm_z*zEngine2Cg;
 
 % 3 -> aerodynamiques
 % Récupérer les variables

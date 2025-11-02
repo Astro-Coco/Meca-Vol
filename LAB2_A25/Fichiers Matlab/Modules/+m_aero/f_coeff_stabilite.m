@@ -131,35 +131,35 @@ ct        = fn_n/(qbar_pa*s_wb);
 
 %%% Calcul de l'angle du stabilisateur
     %Formule du downwash selon alpha et coeff données
-    % Angle d'attaque du stabilisateur
-    alpha_h = alpha_rad + dstab_rad - epsilon;
-
-%%% Calcul des coefficients de l'empennage arriere
-    % Coefficient de portance
-
-    %Coefficient de portance de l'empennage, selon alpha_h et deflection stab
-
-    %Contribution de la vitese de tangage Q
-    l_h = x_ht; %Distance entre les quarts de cordes aile / empennnage
-    V = tas_mps; % Vitesse vraie
-    Q = q_hat; % Vitesse de tangage
-
-    delta_ah = Q*l_h/V;
-
-    clh = avion.aero.a1*(alpha_h + delta_ah) + avion.aero.a2*delev_rad;
+    % Angle d'attaque du stabilisateur 
+alpha_ht = alpha_rad - eps_rad + dstab_rad + q_radps*(x_ht/tas_mps);
 
 
-    % Coefficient de trainé
-    cd_h = cdcl*clh^2;
+%Coefficient de trainée de l'empennage est nul parce qu'il s'agit %d'un mvt longitudinal
+cdht = 0;
 
-    % Coefficient de moment de tangage
-    cmq = -2 *avion.aero.a1 * vbar_x*l_h / c_wb;
-    contribution_stab = (s_ht*c_ht/(s_wb*c_wb))*cmq - vbar_x*(clh*cos(epsilon) - cd_h*sin(epsilon)) + vbar_z*(cd_h*cos(epsilon) + clh*sin(epsilon));
+% Coefficient de moment de tangage est nul
+cmht = 0;
 
-%%% Expression des coefficients totaux dans le repere stab.
-% Clh normalisé par la surface de l'aile sh/s
-cls = cl_wb + (s_ht/s_wb)*(clh*cos(epsilon) - cd_h*sin(epsilon));
-cds = cd_wb + (s_ht/s_wb)*(cd_h*cos(epsilon) + clh*sin(epsilon));
-cms = cm_wb + contribution_stab;
+%% %on ne tient pas compte du fait que eps est petit
+
+% Coefficients de portance pour l'empennage  CL_H
+CL_H = s_ht/s_wb*(clht*cos(eps_rad) - cdht*sin(eps_rad));
+
+
+% Coefficients de trainée CD_H pour l'empennage
+CD_H = s_ht/s_wb*(cdht*cos(eps_rad) + clht*sin(eps_rad));
+
+
+% Coefficients de moment CM_H pour l'empennage 
+CM_H = s_ht*c_ht/(s_wb*c_wb)*cmht - vbar_x*(clht*cos(alpha_rad-eps_rad)...
+       + cdht*sin(alpha_rad-eps_rad)) +...
+       vbar_z*(cdht*cos(alpha_rad-eps_rad) - clht*sin(alpha_rad-eps_rad));
+
+
+%% % Expression des coefficients totaux dans le repère stab.
+cls = cl_wb + CL_H ;
+cds = cd_wb + CD_H ;
+cms = cm_wb + CM_H ;
 
 end
