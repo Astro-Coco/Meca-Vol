@@ -49,9 +49,26 @@ g0 = 9.81;
 xEngine2Cg = avion.geom.x_m + xcg_perc*avion.geom.c_wb;
 zEngine2Cg = avion.geom.z_m - zcg_m;
 
+%%% Calcul du downwash
+alpha_deg = m_convert.f_angle(alpha_rad, 'rad', 'deg')
+epsilon_deg = avion.aero.eps0 + avion.aero.epsa * alpha_deg;
+
+    % Correction du downwash selon la deflection des volets
+    delta_eps_downwash = avion.aero.d_eps.value(dflaps + 1);
+    epsilon_deg = epsilon_deg + delta_eps_downwash;
+    eps_rad = m_convert.f_angle(epsilon_deg, 'deg', 'rad');
+
+
+%Coefficient de trainée de l'empennage est nul parce qu'il s'agit %d'un mvt longitudinal
+cdht = 0;
+
+
+% Coefficient de portance de l'empennage
+clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_eps_downwash)*cos(eps_rad)
+
 
 %%% Variables de sortie de la fonction f_coeff_stabilite
-[cls, cds, cms, clht, cdht, eps_rad] = m_aero.f_coeff_stabilite(alpha_rad, alpha_dot, ...
+[cls, cds, cms] = m_aero.f_coeff_stabilite(alpha_rad, alpha_dot, ...
     q_radps, tas_mps, mach_nb, qbar_pa, delev_rad, dflaps, dstab_rad, ...
     fn_n, avion);
 
