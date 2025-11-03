@@ -59,8 +59,8 @@ Fp_z = masse_kg*g0*cos(theta_rad);
 Mp_y = 0;
 
 % 2 -> propulives
-Fm_x = fn_n*cos(alpha);
-Fm_z = fn_n*sin(alpha);
+Fm_x = fn_n*cos(alpha_rad);
+Fm_z = fn_n*sin(alpha_rad);
 Mm_y = Fm_x*xEngine2Cg-Fm_z*zEngine2Cg;
 
 % 3 -> aerodynamiques
@@ -69,11 +69,11 @@ s_ht = avion.geom.s_ht;
 s_wb = avion.geom.s_wb;
 
 Fa_x = qbar_pa * avion.geom.s_wb * ( ...
-    (clb + s_ht/s_wb * (cl_h * cos(epsilon) - cd_h * sin(epsilon))) * sin(alpha) ...
-    - (cdb + s_ht/s_wb *(cd_h*cos(epsilon) + cl_h*sin(epsilon)))* cos(alpha));
+    (clb + s_ht/s_wb * (clht * cos(eps_rad) - cdht * sin(eps_rad))) * sin(alpha_rad) ...
+    - (cdb + s_ht/s_wb *(cdht*cos(eps_rad) + clht*sin(eps_rad)))* cos(alpha_rad));
 Fa_z = -qbar_pa * avion.geom.s_wb * ( ...
-    (cdb + s_ht/s_wb * (cd_h * cos(epsilon) + cl_h * sin(epsilon))) * sin(alpha) ...
-    + (clb + s_ht/s_wb *(cl_h*cos(epsilon) + cdh*sin(epsilon)))* cos(alpha));
+    (cdb + s_ht/s_wb * (cdht * cos(eps_rad) + clht * sin(eps_rad))) * sin(alpha_rad) ...
+    + (clb + s_ht/s_wb *(clht*cos(eps_rad) + cdht*sin(eps_rad)))* cos(alpha_rad));
 Ma_y = qbar_pa*avion.geom.s_wb*cmb*avion.geom.c_wb-Fa_x*zcg_m-Fa_z*(0.25*avion.geom.c_wb-xcg_perc*avion.geom.c_wb);
 
 %%% Bilan des forces dans le repere avion
