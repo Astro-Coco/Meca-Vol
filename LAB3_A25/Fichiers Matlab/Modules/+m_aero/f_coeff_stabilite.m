@@ -53,8 +53,8 @@ c_ht = avion.geom.c_ht;
 x_ht = avion.geom.x_ht;
 z_ht = avion.geom.z_ht;
 
-a1 = avion.aero.a1
-a2 = avion.aero.a2
+a1 = avion.aero.a1;
+a2 = avion.aero.a2;
 
 %%% Calculs des volumes de references de la queue
 vbar_x = s_ht*x_ht/(s_wb*c_wb);
@@ -144,7 +144,7 @@ cdht = 0;
 cmht = 0;
 
 % Coefficient de portance de l'empennage
-clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_eps_downwash)*cos(eps_rad)
+clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_eps_downwash)*cos(eps_rad);
 
 %%% On ne tient pas compte du fait que eps est petit
 

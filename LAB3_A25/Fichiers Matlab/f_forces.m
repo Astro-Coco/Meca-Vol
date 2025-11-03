@@ -46,8 +46,9 @@ g0 = 9.81;
 %%% Données
 s_ht = avion.geom.s_ht;
 s_wb = avion.geom.s_wb;
-a1 = avion.aero.a1
-a2 = avion.aero.a2
+a1 = avion.aero.a1;
+a2 = avion.aero.a2;
+x_ht = avion.geom.x_ht;
 
 % Definition des distances du moteur par rapport au centre de gravite de
 % l'avion
@@ -55,7 +56,7 @@ xEngine2Cg = avion.geom.x_m + xcg_perc*avion.geom.c_wb;
 zEngine2Cg = avion.geom.z_m - zcg_m;
 
 %%% Calcul du downwash
-alpha_deg = m_convert.f_angle(alpha_rad, 'rad', 'deg')
+alpha_deg = m_convert.f_angle(alpha_rad, 'rad', 'deg');
 epsilon_deg = avion.aero.eps0 + avion.aero.epsa * alpha_deg;
 
     % Correction du downwash selon la deflection des volets
@@ -74,7 +75,7 @@ cdht = 0;
 
 
 % Coefficient de portance de l'empennage
-clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_eps_downwash)*cos(eps_rad)
+clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_eps_downwash)*cos(eps_rad);
 
 
 %%% Variables de sortie de la fonction f_coeff_stabilite

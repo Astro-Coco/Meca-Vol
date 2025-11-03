@@ -17,7 +17,7 @@ h_m = m_convert.f_length(h_pi, 'ft', 'm');
 masse_kg = 100000;
 zcg_m = 0;
 alpha_deg = 5;
-alpha_rad = m_convert.f_angle(alpha_deg, 'deg', 'rad')
+alpha_rad = m_convert.f_angle(alpha_deg, 'deg', 'rad');
 alpha_dot = 0;
 theta_deg = 5;
 theta_rad = m_convert.f_angle(theta_deg, 'deg', 'rad');
@@ -37,10 +37,10 @@ mach_nb = m_atmos.f_nombre_mach(tas_mps, h_m);
 %%% Coefficients dans le repère stabilité
 [cls, cds, cms] = m_aero.f_coeff_stabilite(alpha_rad, alpha_dot, ...
     q_radps, tas_mps, mach_nb, qbar_pa, delta_e, dflaps, dstab_rad, ...
-    fn_n, avion)
+    fn_n, avion);
 
 %%% Coefficients dans le repère body
-[clb, cdb, cmb] = m_aero.f_stab2body(cls, cds, cms, alpha_rad)
+[clb, cdb, cmb] = m_aero.f_stab2body(cls, cds, cms, alpha_rad);
 
 disp(clb)
 disp(cdb)
@@ -49,9 +49,9 @@ disp(cmb)
 %%% Forces et moment
 [fx_n, fz_n, my_nm] = f_forces(clb, cdb, cmb, theta_rad, xcg_perc, ...
     zcg_m, masse_kg, qbar_pa, fn_n, avion, alpha_rad, alpha_dot, ...
-    q_radps, tas_mps, mach_nb, delev_rad, dflaps, dstab_rad)
+    q_radps, tas_mps, mach_nb, delev_rad, dflaps, dstab_rad);
 
 
 disp(fx_n)
-disp(fz_z)
+disp(fz_n)
 disp(my_nm)
