@@ -36,9 +36,12 @@
 
 
 function [fx_n, fz_n, my_nm] = f_forces(clb, cdb, cmb, theta_rad, xcg_perc, ...
-    zcg_m, masse_kg, qbar_pa, fn_n, avion)
+    zcg_m, masse_kg, qbar_pa, fn_n, avion, alpha_rad, alpha_dot, ...
+    q_radps, tas_mps, mach_nb, delev_rad, dflaps, dstab_rad)
+    
 
 % Definition de la constante de gravitee en m/s^2
+avion = f_loadAircraftData;
 g0 = 9.81; 
 
 % Definition des distances du moteur par rapport au centre de gravite de
@@ -46,8 +49,9 @@ g0 = 9.81;
 xEngine2Cg = avion.geom.x_m + xcg_perc*avion.geom.c_wb;
 zEngine2Cg = avion.geom.z_m - zcg_m;
 
+
 %%% Variables de sortie de la fonction f_coeff_stabilite
-[cls, cds, cms, clh, cd_h, epsilon] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
+[cls, cds, cms, clht, cdht, eps_rad] = m_aero.f_coeff_stabilite(alpha_rad, alpha_dot, ...
     q_radps, tas_mps, mach_nb, qbar_pa, delev_rad, dflaps, dstab_rad, ...
     fn_n, avion);
 

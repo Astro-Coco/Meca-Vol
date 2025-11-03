@@ -13,7 +13,7 @@ avion = f_loadAircraftData;
 
 %%% Conditions de vol pour validation
 h_pi = 20000;
-h_m = m_convert.f_length(h_pi, 'pi', 'm');
+h_m = m_convert.f_length(h_pi, 'ft', 'm');
 masse_kg = 100000;
 zcg_m = 0;
 alpha_deg = 5;
@@ -35,7 +35,7 @@ mach_nb = m_atmos.f_nombre_mach(tas_mps, h_m);
 
 
 %%% Coefficients dans le repère stabilité
-[cls, cds, cms] = m_aero.f_coeff_stabilite(alpha_rad, alpha_dot, ...
+[cls, cds, cms, clht, cdht, eps_rad] = m_aero.f_coeff_stabilite(alpha_rad, alpha_dot, ...
     q_radps, tas_mps, mach_nb, qbar_pa, delta_e, dflaps, dstab_rad, ...
     fn_n, avion)
 
@@ -48,7 +48,9 @@ disp(cmb)
 
 %%% Forces et moment
 [fx_n, fz_n, my_nm] = f_forces(clb, cdb, cmb, theta_rad, xcg_perc, ...
-    zcg_m, masse_kg, qbar_pa, fn_n, avion)
+    zcg_m, masse_kg, qbar_pa, fn_n, avion, alpha_rad, alpha_dot, ...
+    q_radps, tas_mps, mach_nb, delev_rad, dflaps, dstab_rad)
+
 
 disp(fx_n)
 disp(fz_z)
