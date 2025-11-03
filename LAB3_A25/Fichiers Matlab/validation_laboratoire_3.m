@@ -22,16 +22,17 @@ alpha_dot = 0;
 theta_deg = 5;
 theta_rad = m_convert.f_angle(theta_deg, 'deg', 'rad');
 V_mps = 240;
+tas_mps = m_convert.f_velocity(V_mps, 'kts', 'm/s');
 fn_n = 15000;
 xcg_perc = 0.1;
-tas_mps = m_convert.f_velocity(V_mps, 'kts', 'm/s');
-qbar_pa = m_atmos.f_pression_dynamique(V_mps, h_m);
-mach_nb = m_atmos.f_nombre_mach(tas_mps, h_m);
 q_radps = 0;
 delta_e = 0;
 delev_rad = 0;
 dflaps = 0;
 dstab_rad = 0;
+qbar_pa = m_atmos.f_pression_dynamique(V_mps, h_m);
+mach_nb = m_atmos.f_nombre_mach(tas_mps, h_m);
+
 
 %%% Coefficients dans le repère stabilité
 [cls, cds, cms] = m_aero.f_coeff_stabilite(alpha_rad, alpha_dot, ...
