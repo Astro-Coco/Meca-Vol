@@ -40,18 +40,10 @@ mach_nb = m_atmos.f_nombre_mach(tas_mps, h_m);
     fn_n, avion);
 
 %%% Coefficients dans le repère body
-[clb, cdb, cmb] = m_aero.f_stab2body(cls, cds, cms, alpha_rad);
+[clb, cdb, cmb] = m_aero.f_stab2body(cls, cds, cms, alpha_rad)
 
-disp(clb)
-disp(cdb)
-disp(cmb)
 
 %%% Forces et moment
 [fx_n, fz_n, my_nm] = f_forces(clb, cdb, cmb, theta_rad, xcg_perc, ...
     zcg_m, masse_kg, qbar_pa, fn_n, avion, alpha_rad, alpha_dot, ...
-    q_radps, tas_mps, mach_nb, delev_rad, dflaps, dstab_rad);
-
-
-disp(fx_n)
-disp(fz_n)
-disp(my_nm)
+    q_radps, tas_mps, mach_nb, delev_rad, dflaps, dstab_rad)
