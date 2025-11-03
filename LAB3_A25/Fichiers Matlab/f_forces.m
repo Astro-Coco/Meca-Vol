@@ -46,6 +46,8 @@ g0 = 9.81;
 %%% Données
 s_ht = avion.geom.s_ht;
 s_wb = avion.geom.s_wb;
+a1 = avion.aero.a1
+a2 = avion.aero.a2
 
 % Definition des distances du moteur par rapport au centre de gravite de
 % l'avion
@@ -60,6 +62,11 @@ epsilon_deg = avion.aero.eps0 + avion.aero.epsa * alpha_deg;
     delta_eps_downwash = avion.aero.d_eps.value(dflaps + 1);
     epsilon_deg = epsilon_deg + delta_eps_downwash;
     eps_rad = m_convert.f_angle(epsilon_deg, 'deg', 'rad');
+
+%%% Calcul de l'angle du stabilisateur
+    %Formule du downwash selon alpha et coeff données
+    % Angle d'attaque du stabilisateur 
+alpha_ht = alpha_rad - eps_rad + dstab_rad + q_radps*(x_ht/tas_mps);
 
 
 %Coefficient de trainée de l'empennage est nul parce qu'il s'agit %d'un mvt longitudinal
