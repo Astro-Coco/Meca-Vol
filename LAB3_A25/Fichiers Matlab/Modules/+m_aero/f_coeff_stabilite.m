@@ -12,7 +12,7 @@ function [cls, cds, cms] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
 %    fn_n, avion)
 %
 % Inputs:
-%   - alpha         : angle d'attaque / d'incidence                   [rad]
+%   - alpha_rad     : angle d'attaque / d'incidence                   [rad]
 %   - alpha_dot     : variation de l'angle d'attaque                [rad/s]
 %   - q_radps       : vitesse de tangage                            [rad/s]
 %   - tas_mps       : vitesse vraie de l'avion                        [m/s]
@@ -59,7 +59,6 @@ a2 = avion.aero.a2
 %%% Calculs des volumes de references de la queue
 vbar_x = s_ht*x_ht/(s_wb*c_wb);
 
-
 % Possible erreur de c, aurait du etre c_ht pour être utilisée pour calculer Cmh
 vbar_z = s_ht*z_ht/(s_wb*c_wb);
 
@@ -69,7 +68,6 @@ alpha_deg = m_convert.f_angle(alpha_rad, 'rad', 'deg');
 %%% Definitions des parametres additionnels
 q_hat     = q_radps*c_wb/(2*tas_mps); 
 adot_hat  = alpha_dot*c_wb/(2*tas_mps);
-
 ct        = fn_n/(qbar_pa*s_wb);
 
 %%% Calcul des coefficients de l'aile
@@ -100,7 +98,7 @@ ct        = fn_n/(qbar_pa*s_wb);
 
 
     delta_cd0 = interp1(avion.aero.d_cd0.mach, avion.aero.d_cd0.value, mach_nb, 'linear', 'extrap');
-    cd_wb = cd0 + delta_cd0 + cdcl*cl_wb^2; %Juste WB or whole?
+    cd_wb = cd0 + delta_cd0 + cdcl*cl_wb^2;
 
 
     % Coefficient de moment de tangage

@@ -13,6 +13,7 @@ avion = f_loadAircraftData;
 
 %%% Conditions de vol pour validation
 h_pi = 20000;
+h_m = m_convert.f_length(h_pi, 'pi', 'm');
 masse_kg = 100000;
 zcg_m = 0;
 alpha_deg = 5;
@@ -20,15 +21,15 @@ alpha_rad = m_convert.f_angle(alpha_deg, 'deg', 'rad')
 alpha_dot = 0;
 theta_deg = 5;
 theta_rad = m_convert.f_angle(theta_deg, 'deg', 'rad');
-tas_mps = 240;
+V_mps = 240;
 fn_n = 15000;
 xcg_perc = 0.1;
-h_m = m_convert.f_length(h_pi, 'ft', 'm');
-V_mps = m_convert.f_velocity(tas_mps, 'kts', 'm/s');
+tas_mps = m_convert.f_velocity(V_mps, 'kts', 'm/s');
 qbar_pa = m_atmos.f_pression_dynamique(V_mps, h_m);
-mach_nb = m_atmos.f_nombre_mach(V_mps, h_m);
+mach_nb = m_atmos.f_nombre_mach(tas_mps, h_m);
 q_radps = 0;
 delta_e = 0;
+delev_rad = 0;
 dflaps = 0;
 dstab_rad = 0;
 
