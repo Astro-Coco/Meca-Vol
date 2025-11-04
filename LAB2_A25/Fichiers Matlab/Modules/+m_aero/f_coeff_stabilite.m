@@ -12,7 +12,7 @@ function [cls, cds, cms] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
 %    fn_n, avion)
 %
 % Inputs:
-%   - alpha         : angle d'attaque / d'incidence                   [rad]
+%   - alpha_rad     : angle d'attaque / d'incidence                   [rad]
 %   - alpha_dot     : variation de l'angle d'attaque                [rad/s]
 %   - q_radps       : vitesse de tangage                            [rad/s]
 %   - tas_mps       : vitesse vraie de l'avion                        [m/s]
@@ -59,7 +59,6 @@ a2 = avion.aero.a2;
 %%% Calculs des volumes de references de la queue
 vbar_x = s_ht*x_ht/(s_wb*c_wb);
 
-
 % Possible erreur de c, aurait du etre c_ht pour être utilisée pour calculer Cmh
 vbar_z = s_ht*z_ht/(s_wb*c_wb);
 
@@ -69,7 +68,6 @@ alpha_deg = m_convert.f_angle(alpha_rad, 'rad', 'deg');
 %%% Definitions des parametres additionnels
 q_hat     = q_radps*c_wb/(2*tas_mps); 
 adot_hat  = alpha_dot*c_wb/(2*tas_mps);
-
 ct        = fn_n/(qbar_pa*s_wb);
 
 %%% Calcul des coefficients de l'aile
@@ -100,7 +98,7 @@ ct        = fn_n/(qbar_pa*s_wb);
 
 
     delta_cd0 = interp1(avion.aero.d_cd0.mach, avion.aero.d_cd0.value, mach_nb, 'linear', 'extrap');
-    cd_wb = cd0 + delta_cd0 + cdcl*cl_wb^2; %Juste WB or whole?
+    cd_wb = cd0 + delta_cd0 + cdcl*cl_wb^2;
 
 
     % Coefficient de moment de tangage
@@ -134,7 +132,7 @@ ct        = fn_n/(qbar_pa*s_wb);
     eps_rad = m_convert.f_angle(epsilon_deg, 'deg', 'rad');
 
 %%% Calcul de l'angle du stabilisateur
-    % Formule du downwash selon alpha et coeff données
+    %Formule du downwash selon alpha et coeff données
     % Angle d'attaque du stabilisateur 
 alpha_ht = alpha_rad - eps_rad + dstab_rad + q_radps*(x_ht/tas_mps);
 
@@ -146,8 +144,7 @@ cdht = 0;
 cmht = 0;
 
 % Coefficient de portance de l'empennage
-delta_e = 0;
-clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_e)*cos(eps_rad);
+clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_eps_downwash)*cos(eps_rad);
 
 %%% On ne tient pas compte du fait que eps est petit
 
