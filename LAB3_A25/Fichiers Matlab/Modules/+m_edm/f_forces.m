@@ -34,26 +34,20 @@
 % $ Revision: 1.0 $ $Date: 06/29/2017 by G. Ghazi$
 % $ Revision: 2.0 $ $Date: XX/XX/XXXX by "Nom Etudiants"$
 
-
 function [fx_n, fz_n, my_nm] = f_forces(clb, cdb, cmb, theta_rad, xcg_perc, ...
     zcg_m, masse_kg, qbar_pa, fn_n, avion)
     
-
 % Definition de la constante de gravitee en m/s^2
 g0 = 9.81; 
 
 %%% Données
 s_ht = avion.geom.s_ht;
 s_wb = avion.geom.s_wb;
-a1 = avion.aero.a1;
-a2 = avion.aero.a2;
-x_ht = avion.geom.x_ht;
 
 % Definition des distances du moteur par rapport au centre de gravite de
 % l'avion
 xEngine2Cg = avion.geom.x_m + xcg_perc*avion.geom.c_wb;
 zEngine2Cg = avion.geom.z_m - zcg_m;
-
 
 %%% Calcul des forces
 % 1 -> inertielles (poids)
@@ -71,8 +65,8 @@ Mm_y = Fm_x*xEngine2Cg-Fm_z*zEngine2Cg;
 s_ht = avion.geom.s_ht;
 s_wb = avion.geom.s_wb;
 
-Fa_x = qbar_pa * avion.geom.s_wb * clb;
-Fa_z = -qbar_pa * avion.geom.s_wb * cdb;
+Fa_x = -qbar_pa * avion.geom.s_wb * clb ;
+Fa_z = -qbar_pa * avion.geom.s_wb * cdb ;
 Ma_y = qbar_pa*avion.geom.s_wb*cmb*avion.geom.c_wb-Fa_x*zcg_m-Fa_z*(0.25*avion.geom.c_wb-xcg_perc*avion.geom.c_wb);
 
 %%% Bilan des forces dans le repere avion
