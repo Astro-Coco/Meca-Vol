@@ -70,42 +70,51 @@ if ~exist('uv_mps', 'var')
 end
 
 %%% Calcul des composantes de la vitese vraie
-ua_mps =  % fonction de ub et uv
-wa_mps =  % fonction de wb et wv
+ua_mps =  ub_mps - uv_mps; % fonction de ub et uv
+wa_mps = wb_mps - wv_mps; % fonction de wb et wv
 
-tas_mps = 
+tas_mps = sqrt(ua_mps^2 + wa_mps^2);
 
 %%% Calcul de l'angle alpha
-
+alpha_rad = atan2(wa_mps, ua_mps);
 
 %%% Hypothese alpha_dot = 0 (NE PAS RETIRER !)
 alpha_dot = 0;
 
 %%% Calcul des donnees atmospheriques
 % Nombre de Mach
+mach_nb = m_atmos.f_nombre_mach(tas_mps, altitude_m);
+
 
 % Pression dynamique
+qbar_pa = m_atmos.f_pression_dynamique(tas_mps, altitude_m);
 
 %%% Calcul des coefficients
 % Dans le repere de stabilite
+[cls, cds, cms] = m_aero.f_coeff_stabilite( ...
+    alpha_rad, alpha_dot, q_radps, tas_mps, mach_nb, qbar_pa, ...
+    delev_rad, dflaps, dstab_rad, fn_n, avion);
 
 % Dans le repere de l'avion
-
+[clb, cdb, cmb] = m_aero.f_stab2body(cls, cds, cms, alpha_rad);
 %%% Calcul des forces qui s'applique sur l'avion
-
+[fx_n, fz_n, my_nm] = m_edm.f_forces(clb, cdb, cmb, theta_rad, xcg_perc, ...
+    zcg_m, masse_kg, qbar_pa, fn_n, avion, alpha_rad, alpha_dot, ...
+    q_radps, tas_mps, mach_nb, delev_rad, dflaps, dstab_rad);
 
 %%% Calcul des acceleration de l'avion
+g = 9.80665; % [m/s2] 
 % Calcul de u_dot = x_dot(1) et w_dot = x_dot(2)
-x_dot(1) = 
-x_dot(2) = 
+x_dot(1) = fx_n / masse_kg - q_radps * wb_mps - g * sin(theta_rad);
+x_dot(2) = fz_n / masse_kg + q_radps * ub_mps + g * cos(theta_rad);
 
 % Calcul q_dot = x_dot(3)
-x_dot(3) = 
+x_dot(3) = my_nm / Iyy_Kgm2;
 
 % Calcul de theta_dot = x_dot(4)
-x_dot(4) = 
+x_dot(4) = q_radps;
 
 % Calcul de h_dot = x_dot(5)
-x_dot(5) = 
+x_dot(5) = ub_mps * sin(theta_rad - alpha_rad);
 
 end
