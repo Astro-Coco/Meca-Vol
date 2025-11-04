@@ -12,7 +12,7 @@ function [cls, cds, cms] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
 %    fn_n, avion)
 %
 % Inputs:
-%   - alpha_rad     : angle d'attaque / d'incidence                   [rad]
+%   - alpha         : angle d'attaque / d'incidence                   [rad]
 %   - alpha_dot     : variation de l'angle d'attaque                [rad/s]
 %   - q_radps       : vitesse de tangage                            [rad/s]
 %   - tas_mps       : vitesse vraie de l'avion                        [m/s]
@@ -46,125 +46,81 @@ function [cls, cds, cms] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
 s_wb = avion.geom.s_wb;
 c_wb = avion.geom.c_wb;
 
+% Aéro 
+cl0  = avion.aero.cl0;   
+cla  = avion.aero.cla;    
+clq  = avion.aero.clq;
+
+cd0  = avion.aero.cd0;    
+cdcl = avion.aero.cdcl;   
+
+cm0  = avion.aero.cm0;    
+cma  = avion.aero.cma;    
+cmq  = avion.aero.cmq;    
+cmadot = avion.aero.cmadot;
+cmct   = avion.aero.cmct;
+
+% Interpolations
+d_cl0_inter = interp1(avion.aero.d_cl0.volet, avion.aero.d_cl0.value, dflaps, 'linear', 'extrap');
+r_cla_inter = interp1(avion.aero.r_cla.mach,  avion.aero.r_cla.value,  mach_nb, 'linear', 'extrap');
+d_cd0_inter = interp1(avion.aero.d_cd0.mach,  avion.aero.d_cd0.value,  mach_nb, 'linear', 'extrap');
+r_cma_inter = interp1(avion.aero.r_cma.mach,  avion.aero.r_cma.value,  mach_nb, 'linear', 'extrap');
+d_cm0_inter = interp1(avion.aero.d_cm0.volet, avion.aero.d_cm0.value, dflaps, 'linear', 'extrap');
+d_eps_inter = interp1(avion.aero.d_eps.volet,  avion.aero.d_eps.value,  dflaps, 'linear', 'extrap');
+
 % Donnees relatives a l'empennage arriere (ht = horizontal tail)
 s_ht = avion.geom.s_ht;
 c_ht = avion.geom.c_ht;
-
 x_ht = avion.geom.x_ht;
 z_ht = avion.geom.z_ht;
 
-a1 = avion.aero.a1;
-a2 = avion.aero.a2;
+eps0 = avion.aero.eps0;   
+epsa = avion.aero.epsa;   
 
-%%% Calculs des volumes de references de la queue
-vbar_x = s_ht*x_ht/(s_wb*c_wb);
+a1 = avion.aero.a1;      
+a2 = avion.aero.a2;       
 
-% Possible erreur de c, aurait du etre c_ht pour être utilisée pour calculer Cmh
-vbar_z = s_ht*z_ht/(s_wb*c_wb);
+%%% Definitions des parametres additionnels
+q_hat     = q_radps*c_wb/(2*tas_mps);
+adot_hat  = alpha_dot*c_wb/(2*tas_mps);
+ct        = fn_n/(qbar_pa*s_wb);
 
 %%% Conversions de entrees
 alpha_deg = m_convert.f_angle(alpha_rad, 'rad', 'deg');
 
-%%% Definitions des parametres additionnels
-q_hat     = q_radps*c_wb/(2*tas_mps); 
-adot_hat  = alpha_dot*c_wb/(2*tas_mps);
-ct        = fn_n/(qbar_pa*s_wb);
 
 %%% Calcul des coefficients de l'aile
     % Coefficient de portance
-    cl0 = avion.aero.cl0;
-    cla = avion.aero.cla;
+clwb = cl0 + d_cl0_inter + r_cla_inter * (cla* alpha_deg) + clq* q_hat;
 
-    % Effet du nombre de Mach sur le coefficient de portance (Ratio par interpolation)
-    % Effet Clu, effets aéroélastiques
-    cla = cla * interp1(avion.aero.r_cla.mach, avion.aero.r_cla.value, mach_nb, 'linear', 'extrap');
-
-    % J'assume ici une valeur de 0, 1, 2 pour dflaps, possible interp1
-    delta_cl0_flaps = avion.aero.d_cl0.value(dflaps + 1);
-
-    cl_wb = cl0 + delta_cl0_flaps + cla*alpha_rad;
-
-    % Contribution de la vitesse de tangage Q sur la portance 
-    clq = avion.aero.clq;
-    %Clq * Q = delta_clq
-    delta_clq = clq * q_hat;
-
-    cl_wb = cl_wb + delta_clq;
-   
-   
     % Coefficient de tra?n?e
-    cd0 = avion.aero.cd0;
-    cdcl = avion.aero.cdcl;
-
-
-    delta_cd0 = interp1(avion.aero.d_cd0.mach, avion.aero.d_cd0.value, mach_nb, 'linear', 'extrap');
-    cd_wb = cd0 + delta_cd0 + cdcl*cl_wb^2;
-
+cdwb = cd0 + d_cd0_inter + cdcl* (clwb ^ 2);
 
     % Coefficient de moment de tangage
-    cm0 = avion.aero.cm0;
-    cma = avion.aero.cma;
+cmwb = cm0 + d_cm0_inter + (cma* r_cma_inter* alpha_deg) + cmq* q_hat + cmadot* adot_hat + cmct* ct;
 
-    % Effet du nombre de Mach sur le coefficient de moment (Ratio par interpolation)
-    cma = cma * interp1(avion.aero.r_cma.mach, avion.aero.r_cma.value, mach_nb, 'linear', 'extrap');
-
-    % Contribution de la vitesse de tangage Q
-    delta_cmq = avion.aero.cmq*q_hat;
-
-    % Contribution de la vitesse de variation de l'angle d'attaque
-    delta_cmadot = avion.aero.cmadot*adot_hat;
-
-    % Contribution des volets sur cm0
-    delta_cm0 = avion.aero.d_cm0.value(dflaps + 1);
-
-    %Contribution des moteurs sur cm0
-    delta_cm_mot = avion.aero.cmct * ct;
-
-    cm_wb = cm0 + delta_cm0 + cma*alpha_rad + delta_cmq + delta_cmadot + delta_cm_mot;
-
-    
 %%% Calcul du downwash
-    epsilon_deg = avion.aero.eps0 + avion.aero.epsa * alpha_deg;
-
-    % Correction du downwash selon la deflection des volets
-    delta_eps_downwash = avion.aero.d_eps.value(dflaps + 1);
-    epsilon_deg = epsilon_deg + delta_eps_downwash;
-    eps_rad = m_convert.f_angle(epsilon_deg, 'deg', 'rad');
+eps_deg = eps0 + epsa * alpha_deg + d_eps_inter;       
+eps_rad = m_convert.f_angle(eps_deg, 'deg', 'rad');     
 
 %%% Calcul de l'angle du stabilisateur
-    %Formule du downwash selon alpha et coeff données
-    % Angle d'attaque du stabilisateur 
-alpha_ht = alpha_rad - eps_rad + dstab_rad + q_radps*(x_ht/tas_mps);
+alphah = alpha_rad - eps_rad + dstab_rad + q_radps* (x_ht / tas_mps);
 
+%%% Calculs des volumes de references de la queue
+vbar_x = s_ht*x_ht/(s_wb*c_wb);
+vbar_z = s_ht*z_ht/(s_wb*c_wb);
 
-%Coefficient de trainée de l'empennage est nul parce qu'il s'agit %d'un mvt longitudinal
-cdht = 0;
+%%% Calcul des coefficients de l'empennage arriere
+    % Coefficient de portance
+clht = s_ht/s_wb*(a1* alphah + a2* delev_rad)*cos(eps_rad); 
+    % Coefficient de tra?n?e
+cdht = s_ht/s_wb*(a1* alphah + a2* delev_rad)*sin(eps_rad);
+    % Coefficient de moment de tangage
+cmht = (-vbar_x*cos(alpha_rad-eps_rad) - vbar_z*sin(alpha_rad-eps_rad))*(a1*alphah + a2*delev_rad);
 
-% Coefficient de moment de tangage est nul
-cmht = 0;
-
-% Coefficient de portance de l'empennage
-clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_eps_downwash)*cos(eps_rad);
-
-%%% On ne tient pas compte du fait que eps est petit
-
-% Coefficients de portance pour l'empennage  CL_H
-CL_H = s_ht/s_wb*(clht*cos(eps_rad) - cdht*sin(eps_rad));
-
-
-% Coefficients de trainée CD_H pour l'empennage
-CD_H = s_ht/s_wb*(cdht*cos(eps_rad) + clht*sin(eps_rad));
-
-
-% Coefficients de moment CM_H pour l'empennage 
-CM_H = s_ht*c_ht/(s_wb*c_wb)*cmht - vbar_x*(clht*cos(alpha_rad-eps_rad)...
-       + cdht*sin(alpha_rad-eps_rad)) +...
-       vbar_z*(cdht*cos(alpha_rad-eps_rad) - clht*sin(alpha_rad-eps_rad));
-
-
-%% % Expression des coefficients totaux dans le repère stab.
-cls = cl_wb + CL_H ;
-cds = cd_wb + CD_H ;
-cms = cm_wb + CM_H ;
+%%% Expression des coefficients totaux dans le repere stab.
+cls = clwb + clht;
+cds = cdwb + cdht;
+cms = cmwb + cmht;
 
 end
