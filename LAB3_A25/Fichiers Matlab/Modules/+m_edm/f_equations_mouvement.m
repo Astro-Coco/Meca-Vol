@@ -99,8 +99,7 @@ qbar_pa = m_atmos.f_pression_dynamique(tas_mps, altitude_m);
 [clb, cdb, cmb] = m_aero.f_stab2body(cls, cds, cms, alpha_rad);
 %%% Calcul des forces qui s'applique sur l'avion
 [fx_n, fz_n, my_nm] = m_edm.f_forces(clb, cdb, cmb, theta_rad, xcg_perc, ...
-    zcg_m, masse_kg, qbar_pa, fn_n, avion, alpha_rad, alpha_dot, ...
-    q_radps, tas_mps, mach_nb, delev_rad, dflaps, dstab_rad);
+    zcg_m, masse_kg, qbar_pa, fn_n, avion);
 
 %%% Calcul des acceleration de l'avion
 g = 9.80665; % [m/s2] 
