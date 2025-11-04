@@ -28,7 +28,8 @@ function a_mps = f_vitesse_son(altitude_m)
 %%% Constante des gaz parfait
 R_air = 287.058;
 gamma_air = 1.4;
+T_k = m_atmos.f_temperature(altitude_m);
 
-a_mps = sqrt(gamma_air*R_air*m_atmos.f_temperature(altitude_m));
-
+a_mps = sqrt(gamma_air * R_air * T_k);  % vitesse du son (m/s)
 end
+
