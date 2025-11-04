@@ -51,22 +51,22 @@ zEngine2Cg = avion.geom.z_m - zcg_m;
 
 %%% Calcul des forces
 % 1 -> inertielles (poids)
-Fp_x = -masse_kg*g0*sin(theta_rad);
-Fp_z = masse_kg*g0*cos(theta_rad);
-Mp_y = 0;
+Fp_x = -masse_kg*g0*sin(theta_rad) ;
+Fp_z = masse_kg*g0*cos(theta_rad) ;
+Mp_y = 0 ;
 
-% 2 -> propulives
-Fm_x = fn_n*cos(avion.geom.i_m);
-Fm_z = -fn_n*sin(avion.geom.i_m);
-Mm_y = Fm_x*xEngine2Cg-Fm_z*zEngine2Cg;
+% 2 -> propulsives
+Fm_x = fn_n*cos(avion.geom.i_m) ;
+Fm_z = fn_n*sin(avion.geom.i_m) ;
+Mm_y = Fm_x*zEngine2Cg+Fm_z*xEngine2Cg ;
 
 % 3 -> aerodynamiques
 % Récupérer les variables
 s_ht = avion.geom.s_ht;
 s_wb = avion.geom.s_wb;
 
-Fa_x = -qbar_pa * avion.geom.s_wb * clb ;
-Fa_z = -qbar_pa * avion.geom.s_wb * cdb ;
+Fa_x = qbar_pa * avion.geom.s_wb * cdb ;
+Fa_z = -qbar_pa * avion.geom.s_wb * clb ;
 Ma_y = qbar_pa*avion.geom.s_wb*cmb*avion.geom.c_wb-Fa_x*zcg_m-Fa_z*(0.25*avion.geom.c_wb-xcg_perc*avion.geom.c_wb);
 
 %%% Bilan des forces dans le repere avion
