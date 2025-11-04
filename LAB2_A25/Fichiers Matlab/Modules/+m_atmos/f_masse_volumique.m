@@ -27,20 +27,15 @@ function rho_kgpm3 = f_masse_volumique(altitude_m)
 
 %%% Masse volumique de l'air au niveau de la mer (h = 0)
 rho0_kgpm3 = 1.2250;
-
-% %%% Conversion de la variable altitude_m en [ft]
+%%% Conversion de la variable altitude_m en [ft]
 altitude_ft = m_convert.f_length(altitude_m, 'm', 'ft');
 
-%%% Calcul des ratios de temperature (theta) et de pression (delta)
+%%% Calcul du ratio de masse volumique 
 if altitude_ft <= 36089.24
-    theta = (1-altitude_ft*6.875*1e-6);
-    delta = (1-altitude_ft*6.8756*1e-6)^5.25588;
+    sigma = (1 - 6.8756e-6 .* altitude_ft) .^ 4.25588;
 else
-    theta = 0.7519;
-    delta = (0.2233*exp(-4.806*1e-5*(altitude_ft-36089.24)));
+    sigma = 0.29708 .* exp(-4.806e-5 .* (altitude_ft - 36089.24));
 end
-
-sigma = delta/theta;
-rho_kgpm3 = sigma*rho0_kgpm3;
+rho_kgpm3=rho0_kgpm3*sigma;
 
 end

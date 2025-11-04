@@ -27,18 +27,15 @@ function T_k  = f_temperature(altitude_m)
 
 %%% Temperature au niveau de la mer (h=0 m)
 T0_k = 288.15;
-
-% %%% Conversion de la variable altitude_m en [ft]
+%%% Conversion de la variable altitude_m en [ft]
 altitude_ft = m_convert.f_length(altitude_m, 'm', 'ft');
 
-%%% Calcul du ratio de temperature (theta)
+%%% Calcul du ratio de température (theta)
 if altitude_ft <= 36089.24
-    theta = (1-altitude_ft*6.875*1e-6);
+    theta = (1 - altitude_ft * 6.875e-6);
 else
     theta = 0.7519;
 end
-
-%%% Calcul de la temperature
-T_k = theta*T0_k;
+T_k=T0_k*theta;
 
 end
