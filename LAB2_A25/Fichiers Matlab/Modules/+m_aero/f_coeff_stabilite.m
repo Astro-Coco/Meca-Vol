@@ -1,6 +1,6 @@
 function [cls, cds, cms] = f_coeff_stabilite(alpha_rad, alpha_dot, ...
     q_radps, tas_mps, mach_nb, qbar_pa, delev_rad, dflaps, dstab_rad, ...
-    fn_n, avion)
+    fn_n, avion, delta_e)
 %F_COEFF_STABILITE permet de calculer les coefficients aerodynamiques de
 %l'avion au complet, exprime dans le repere de stabilite de l'aile. Le
 %calcul du moment est effectue au centre aerodynamique de l'aile, soit a
@@ -146,7 +146,6 @@ cdht = 0;
 cmht = 0;
 
 % Coefficient de portance de l'empennage
-delta_e = 0;
 clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_e)*cos(eps_rad);
 
 %%% On ne tient pas compte du fait que eps est petit

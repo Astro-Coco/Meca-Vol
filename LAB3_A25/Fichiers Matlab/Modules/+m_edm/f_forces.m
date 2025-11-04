@@ -36,8 +36,7 @@
 
 
 function [fx_n, fz_n, my_nm] = f_forces(clb, cdb, cmb, theta_rad, xcg_perc, ...
-    zcg_m, masse_kg, qbar_pa, fn_n, avion, alpha_rad, alpha_dot, ...
-    q_radps, tas_mps, mach_nb, delev_rad, dflaps, dstab_rad)
+    zcg_m, masse_kg, qbar_pa, fn_n, avion)
     
 
 % Definition de la constante de gravitee en m/s^2
@@ -55,34 +54,6 @@ x_ht = avion.geom.x_ht;
 xEngine2Cg = avion.geom.x_m + xcg_perc*avion.geom.c_wb;
 zEngine2Cg = avion.geom.z_m - zcg_m;
 
-%%% Calcul du downwash
-alpha_deg = m_convert.f_angle(alpha_rad, 'rad', 'deg');
-epsilon_deg = avion.aero.eps0 + avion.aero.epsa * alpha_deg;
-
-    % Correction du downwash selon la deflection des volets
-    delta_eps_downwash = avion.aero.d_eps.value(dflaps + 1);
-    epsilon_deg = epsilon_deg + delta_eps_downwash;
-    eps_rad = m_convert.f_angle(epsilon_deg, 'deg', 'rad');
-
-%%% Calcul de l'angle du stabilisateur
-    %Formule du downwash selon alpha et coeff données
-    % Angle d'attaque du stabilisateur 
-alpha_ht = alpha_rad - eps_rad + dstab_rad + q_radps*(x_ht/tas_mps);
-
-
-%Coefficient de trainée de l'empennage est nul parce qu'il s'agit %d'un mvt longitudinal
-cdht = 0;
-
-
-% Coefficient de portance de l'empennage
-clht = s_ht/s_wb*(a1*alpha_ht+a2*delta_eps_downwash)*cos(eps_rad);
-
-
-%%% Variables de sortie de la fonction f_coeff_stabilite
-[cls, cds, cms] = m_aero.f_coeff_stabilite(alpha_rad, alpha_dot, ...
-    q_radps, tas_mps, mach_nb, qbar_pa, delev_rad, dflaps, dstab_rad, ...
-    fn_n, avion);
-
 
 %%% Calcul des forces
 % 1 -> inertielles (poids)
@@ -91,8 +62,8 @@ Fp_z = masse_kg*g0*cos(theta_rad);
 Mp_y = 0;
 
 % 2 -> propulives
-Fm_x = fn_n*cos(alpha_rad);
-Fm_z = fn_n*sin(alpha_rad);
+Fm_x = fn_n*cos(avion.geom.i_m);
+Fm_z = -fn_n*sin(avion.geom.i_m);
 Mm_y = Fm_x*xEngine2Cg-Fm_z*zEngine2Cg;
 
 % 3 -> aerodynamiques
@@ -100,12 +71,8 @@ Mm_y = Fm_x*xEngine2Cg-Fm_z*zEngine2Cg;
 s_ht = avion.geom.s_ht;
 s_wb = avion.geom.s_wb;
 
-Fa_x = qbar_pa * avion.geom.s_wb * ( ...
-    (clb + s_ht/s_wb * (clht * cos(eps_rad) - cdht * sin(eps_rad))) * sin(alpha_rad) ...
-    - (cdb + s_ht/s_wb *(cdht*cos(eps_rad) + clht*sin(eps_rad)))* cos(alpha_rad));
-Fa_z = -qbar_pa * avion.geom.s_wb * ( ...
-    (cdb + s_ht/s_wb * (cdht * cos(eps_rad) + clht * sin(eps_rad))) * sin(alpha_rad) ...
-    + (clb + s_ht/s_wb *(clht*cos(eps_rad) + cdht*sin(eps_rad)))* cos(alpha_rad));
+Fa_x = qbar_pa * avion.geom.s_wb * clb;
+Fa_z = -qbar_pa * avion.geom.s_wb * cdb;
 Ma_y = qbar_pa*avion.geom.s_wb*cmb*avion.geom.c_wb-Fa_x*zcg_m-Fa_z*(0.25*avion.geom.c_wb-xcg_perc*avion.geom.c_wb);
 
 %%% Bilan des forces dans le repere avion
