@@ -35,17 +35,55 @@ function trim_data = f_croisiere(altitude_m, tas_mps, masse_kg, xcg_perc, ...
 % $ Revision: 2.0 $ $Date: XX/XX/XXXX by "Nom Etudiants"$
 
 %%% Code pour la pression dynamique et du nombre de Mach
+qbar_pa = m_atmos.f_pression_dynamique(tas_mps, altitude_m)
 
 
 %%% Initialisation de alpha, dstab et Fn
+alpha_rad = m_convert.f_angle(5, 'deg', 'rad');
+dstab_rad = 0;
+fn_n = m_convert.f_force(15000, 'lbf', 'N');
+
+
+%%% Force de portance et coefficient de portance dans le repère body
+i_m = avion.geom.i_m;
+g0 = 9.81;
+s_wb = avion.geom.s_wb;
+
+clb = (masse_kg*g0*cos(alpha_rad)-fn_n*sin(i_m))/(-qbar_pa*swb)
+L = qbar_pa*clb*swb*tas_mps^2
 
 
 %%% D?but de la boucle de convergence
+alpha_vect = m_convert.f_angle(-2:1:10, 'deg','rad')
+clb_vect = zeros(size(alpha_vect))
+
+for j = 1 : 30
+    for i = 1 : length(alpha_vect)
+        [cls_temp, cds_tmp, ~] = m_aero.f_coeff_stabilite(...
+            alpha_vect(i), 0, 0, tas_mps, mach_nb, qbar_pa, 0, 0, ...
+            dstab_rad, fn_n, avion);
+        
+        [clb_tmp, ~, ~] = m_aero.f_stab2body(cls_tmp, cds_tmp, 0, ...
+            alpha_vect(i));
+        
+        clb_vect(i) = clb_tmp;
+    end
+
+    alpha_star = interp1(clb_vect, alpha_vect, clb, 'linear', 'extrap');
+    [~, cdb_tmp, ~] = m_aero.f_stab2body(cls_tmp, cds_tmp, 0, ...
+            alpha_vect(i));
+    cdb = cdb_tmp; 
+    fn_star = (masse_kg*g0*sin(i_m) + qbar_pa*swb*cdb)/cos(i_m)
+    dstab_rad = ...
+
+    alpha_rad = alpha_star
+    fn_n = fn_star
+    dstab_rad = dstab_star
 
 
 %%% Recuperation des donnees en croisiere
-trim_data.fn_n      = ;
-trim_data.alpha_rad = ;
-trim_data.dstab_rad = ;
+trim_data.fn_n      = fn_n;
+trim_data.alpha_rad = alpha_rad;
+trim_data.dstab_rad = dstab_rad;
 
 end
