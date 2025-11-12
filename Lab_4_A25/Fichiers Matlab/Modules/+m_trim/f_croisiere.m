@@ -74,7 +74,8 @@ for j = 1 : 30
             alpha_vect(i));
     cdb = cdb_tmp; 
     fn_star = (masse_kg*g0*sin(i_m) + qbar_pa*swb*cdb)/cos(i_m)
-    dstab_rad = ...
+    dstab = ...
+    
 
     alpha_rad = alpha_star
     fn_n = fn_star
