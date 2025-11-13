@@ -54,12 +54,14 @@ L = qbar_pa*clb*swb*tas_mps^2
 
 
 %%% D?but de la boucle de convergence
-alpha_vect = m_convert.f_angle(-2:1:10, 'deg','rad')
+alpha_vect = m_convert.f_angle(-2:1:10, 'deg', 'rad')
+dstab_vect = m_convert.f_angle(-2:1:8, 'deg', 'rad')
 clb_vect = zeros(size(alpha_vect))
+my_vect = zeros(size(dstab_vect));
 
 for j = 1 : 30
     for i = 1 : length(alpha_vect)
-        [cls_temp, cds_tmp, ~] = m_aero.f_coeff_stabilite(...
+        [cls_tmp, cds_tmp, ~] = m_aero.f_coeff_stabilite(...
             alpha_vect(i), 0, 0, tas_mps, mach_nb, qbar_pa, 0, 0, ...
             dstab_rad, fn_n, avion);
         
@@ -74,9 +76,24 @@ for j = 1 : 30
             alpha_vect(i));
     cdb = cdb_tmp; 
     fn_star = (masse_kg*g0*sin(i_m) + qbar_pa*swb*cdb)/cos(i_m)
-    dstab = ...
     
 
+    for i = 1:length(dstab_vect)
+        [cls_tmp, cds_tmp, cms_tmp] = m_aero.f_coeff_stabilite( ...
+            alpha_star, 0, 0, tas_mps, mach_nb, qbar_pa, ...
+            0, 0, dstab_vect(i), fn_star, avion);
+
+        [clb_tmp, cdb_tmp, cmb_tmp] = m_aero.f_stab2body(cls_tmp, cds_tmp, cms_tmp, alpha_star);
+
+        [~, ~, my_nm_tmp] = m_edm.f_forces(clb_tmp, cdb_tmp, cmb_tmp, alpha_star, ...
+            xcg_perc, zcg_m, masse_kg, qbar_pa, fn_star, avion);
+
+        my_vect(i) = my_nm_tmp;
+    end
+
+    dstab_star = interp1(my_vect, dstab_vect, 0, 'linear', 'extrap');
+
+    
     alpha_rad = alpha_star
     fn_n = fn_star
     dstab_rad = dstab_star
