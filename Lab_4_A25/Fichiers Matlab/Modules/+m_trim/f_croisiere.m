@@ -77,11 +77,11 @@ for j = 1 : 30
 
     % Coefficient cdb
     [~, cdb_tmp, ~] = m_aero.f_stab2body(cls_tmp, cds_tmp, 0, ...
-            alpha_vect(i));
+            alpha_star);
     cdb = cdb_tmp; 
 
     % Estimation de fn_star
-    fn_star = (masse_kg*g0*sin(i_m) + qbar_pa*s_wb*cdb)/cos(i_m);
+    fn_star = (masse_kg*g0*sin(alpha_star) + qbar_pa*s_wb*cdb)/cos(i_m);
 
     % Boucle pour trouver dstab_star
     for i = 1:length(dstab_vect)
@@ -98,16 +98,13 @@ for j = 1 : 30
     end
 
     dstab_star = interp1(my_vect, dstab_vect, 0, 'linear', 'extrap');
-    
-    % Valeurs trim
-    alpha_rad = alpha_star;
-    fn_n = fn_star;
-    dstab_rad = dstab_star;
+
+end
 
 
 %%% Recuperation des donnees en croisiere
-trim_data.fn_n      = fn_n;
-trim_data.alpha_rad = alpha_rad;
-trim_data.dstab_rad = dstab_rad;
+trim_data.fn_n      = fn_star;
+trim_data.alpha_rad = alpha_star;
+trim_data.dstab_rad = dstab_star;
 
 end
