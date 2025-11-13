@@ -35,7 +35,8 @@ function trim_data = f_croisiere(altitude_m, tas_mps, masse_kg, xcg_perc, ...
 % $ Revision: 2.0 $ $Date: XX/XX/XXXX by "Nom Etudiants"$
 
 %%% Code pour la pression dynamique et du nombre de Mach
-qbar_pa = m_atmos.f_pression_dynamique(tas_mps, altitude_m)
+qbar_pa = m_atmos.f_pression_dynamique(tas_mps, altitude_m);
+mach_nb = m_atmos.f_nombre_mach(tas_mps, altitude_m);
 
 
 %%% Initialisation de alpha, dstab et Fn
@@ -49,14 +50,13 @@ i_m = avion.geom.i_m;
 g0 = 9.81;
 s_wb = avion.geom.s_wb;
 
-clb = (masse_kg*g0*cos(alpha_rad)-fn_n*sin(i_m))/(-qbar_pa*swb)
-L = qbar_pa*clb*swb*tas_mps^2
-
+L = masse_kg*g0*cos(alpha_rad) - fn_n*sin(i_m);
+clb = L/(qbar_pa*s_wb);
 
 %%% D?but de la boucle de convergence
-alpha_vect = m_convert.f_angle(-2:1:10, 'deg', 'rad')
-dstab_vect = m_convert.f_angle(-2:1:8, 'deg', 'rad')
-clb_vect = zeros(size(alpha_vect))
+alpha_vect = m_convert.f_angle(-2:1:10, 'deg', 'rad');
+dstab_vect = m_convert.f_angle(-2:1:8, 'deg', 'rad');
+clb_vect = zeros(size(alpha_vect));
 my_vect = zeros(size(dstab_vect));
 
 % Boucle de convergence
@@ -81,7 +81,7 @@ for j = 1 : 30
     cdb = cdb_tmp; 
 
     % Estimation de fn_star
-    fn_star = (masse_kg*g0*sin(i_m) + qbar_pa*swb*cdb)/cos(i_m)
+    fn_star = (masse_kg*g0*sin(i_m) + qbar_pa*s_wb*cdb)/cos(i_m);
 
     % Boucle pour trouver dstab_star
     for i = 1:length(dstab_vect)
@@ -100,9 +100,9 @@ for j = 1 : 30
     dstab_star = interp1(my_vect, dstab_vect, 0, 'linear', 'extrap');
     
     % Valeurs trim
-    alpha_rad = alpha_star
-    fn_n = fn_star
-    dstab_rad = dstab_star
+    alpha_rad = alpha_star;
+    fn_n = fn_star;
+    dstab_rad = dstab_star;
 
 
 %%% Recuperation des donnees en croisiere
