@@ -99,6 +99,13 @@ for j = 1 : 30
 
     dstab_star = interp1(my_vect, dstab_vect, 0, 'linear', 'extrap');
 
+    alpha_rad = alpha_star;
+    dstab_rad = dstab_star;
+    fn = fn_star;
+    
+    L = masse_kg*g0*cos(alpha_rad) - fn_n*sin(i_m);
+    clb = L/(qbar_pa*s_wb);
+
 end
 
 
