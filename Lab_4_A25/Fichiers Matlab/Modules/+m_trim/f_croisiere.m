@@ -60,7 +60,7 @@ clb_vect = zeros(size(alpha_vect));
 my_vect = zeros(size(dstab_vect));
 
 % Boucle de convergence
-for j = 1 : 30
+for j = 1 : 1000
     % Boucle pour trouver alpha_star
     for i = 1 : length(alpha_vect)
         [cls_tmp, cds_tmp, ~] = m_aero.f_coeff_stabilite(...
@@ -76,9 +76,11 @@ for j = 1 : 30
     alpha_star = interp1(clb_vect, alpha_vect, clb, 'linear', 'extrap');
 
     % Coefficient cdb
-    [~, cdb_tmp, ~] = m_aero.f_stab2body(cls_tmp, cds_tmp, 0, ...
-            alpha_star);
-    cdb = cdb_tmp; 
+    [cls_tmp, cds_tmp, ~] = m_aero.f_coeff_stabilite(alpha_star, 0, 0, ...
+    tas_mps, mach_nb, qbar_pa, 0, 0, dstab_rad, fn_n, avion);
+    
+    [~, cdb_tmp, ~] = m_aero.f_stab2body(cls_tmp, cds_tmp, 0, alpha_star);
+    cdb = cdb_tmp;
 
     % Estimation de fn_star
     fn_star = (masse_kg*g0*sin(alpha_star) + qbar_pa*s_wb*cdb)/cos(i_m);
@@ -98,20 +100,31 @@ for j = 1 : 30
     end
 
     dstab_star = interp1(my_vect, dstab_vect, 0, 'linear', 'extrap');
+    
+
+    % Mise à jour des variables
+    old_alpha = alpha_rad;
+    old_dstab = dstab_rad;
 
     alpha_rad = alpha_star;
     dstab_rad = dstab_star;
-    fn = fn_star;
-    
+    fn_n = fn_star;
+
+    % Mise à jour de la portance
     L = masse_kg*g0*cos(alpha_rad) - fn_n*sin(i_m);
     clb = L/(qbar_pa*s_wb);
+
+    % Critère de convergence
+    if abs(alpha_rad - old_alpha) < 1e-6 && abs(dstab_rad - old_dstab) < 1e-6
+        break;
+    end
 
 end
 
 
 %%% Recuperation des donnees en croisiere
-trim_data.fn_n      = fn_star;
-trim_data.alpha_rad = alpha_star;
-trim_data.dstab_rad = dstab_star;
+trim_data.fn_n      = fn_n;
+trim_data.alpha_rad = alpha_rad;
+trim_data.dstab_rad = dstab_rad;
 
 end
