@@ -46,31 +46,31 @@ x0 = [conditions.tas_mps*cos(conditions.alpha_rad), ...
     conditions.theta_rad, conditions.altitude_m];
 
 % Lancement d'une simulation
-[time,x] = m_edm.f_simuler_avion(x0, 50, 1.0, conditions, avion, []);
+[time,x] = m_edm.f_simuler_avion(x0, 250, 0.2, conditions, avion, []);
 
 % Affichage du resultat de la simulation
 figure(); subplot(3, 2, [1 2]);
 plot(time, m_convert.f_length(x(:,5), 'm', 'ft')) ; grid on ; box on;
 xlabel('Temps [sec]') ; ylabel('Altitude [ft]');
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 50], ...
-    'Ylim', [15000 25000]);
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 250], ...
+    'Ylim', [1000 75000]);
 
 subplot(3, 2, 3);
 plot(time, m_convert.f_velocity(x(:,1), 'm/s', 'kts')) ; grid on ; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 50], ...
-    'Ylim', [200 300]) ; ylabel('u_b [m/s]');
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 250], ...
+    'Ylim', [-200 1500]) ; ylabel('u_b [m/s]');
 
 subplot(3, 2, 4);
 plot(time, m_convert.f_velocity(x(:,2), 'm/s', 'kts')) ; grid on ; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 50], ...
-    'Ylim', [20 40]) ; ylabel('w_b [m/s]');
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 250], ...
+    'Ylim', [-50 90]) ; ylabel('w_b [m/s]');
 
 subplot(3, 2, 5); 
 plot(time, m_convert.f_angle(x(:,3), 'rad', 'deg')) ; grid on ; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 50], ...
-    'Ylim', [-5 5]); xlabel('Temps [sec]') ; ylabel('q [deg/s]');
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 250], ...
+    'Ylim', [-50 50]); xlabel('Temps [sec]') ; ylabel('q [deg/s]');
 
 subplot(3, 2, 6); 
 plot(time, m_convert.f_angle(x(:,4), 'rad', 'deg')) ; grid on ; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 50], ...
-    'Ylim', [0 10]); xlabel('Temps [sec]') ; ylabel('\theta [deg]');
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 250], ...
+    'Ylim', [-50 50]); xlabel('Temps [sec]') ; ylabel('\theta [deg]');

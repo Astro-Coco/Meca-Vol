@@ -53,6 +53,8 @@ s_wb = avion.geom.s_wb;
 L = masse_kg*g0*cos(alpha_rad) - fn_n*sin(i_m);
 clb = L/(qbar_pa*s_wb);
 
+%OK
+
 %%% D?but de la boucle de convergence
 alpha_vect = m_convert.f_angle(-2:1:10, 'deg', 'rad');
 dstab_vect = m_convert.f_angle(-2:1:8, 'deg', 'rad');
@@ -74,6 +76,11 @@ for j = 1 : 1000
     end
 
     alpha_star = interp1(clb_vect, alpha_vect, clb, 'linear', 'extrap');
+
+    if mod(j, 50) == 0
+        disp(['Iteration de croisiere: ', num2str(j)]);
+        alpha_deg = m_convert.f_angle(alpha_star, 'rad', 'deg')
+    end
 
     % Coefficient cdb
     [cls_tmp, cds_tmp, ~] = m_aero.f_coeff_stabilite(alpha_star, 0, 0, ...
