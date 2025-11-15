@@ -73,9 +73,11 @@ for j = 1 : 1000
         clb_vect(i) = clb_tmp;
     end
 
+    %Nouvel angle alpha pour produire Clb
     alpha_star = interp1(clb_vect, alpha_vect, clb, 'linear', 'extrap');
 
     % Coefficient cdb
+    % Assumer alpha_dot = 0 et q_radps = 0 pour le trim?
     [cls_tmp, cds_tmp, ~] = m_aero.f_coeff_stabilite(alpha_star, 0, 0, ...
     tas_mps, mach_nb, qbar_pa, 0, 0, dstab_rad, fn_n, avion);
     

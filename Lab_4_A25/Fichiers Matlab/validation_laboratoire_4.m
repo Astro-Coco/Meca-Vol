@@ -20,7 +20,7 @@ conditions.zcg_m = 0;
 
 % Definition de la condition de vol
 conditions.tas_mps = m_convert.f_velocity(400, 'kts', 'm/s');
-conditions.altitude_m = m_convert.f_length(35000, 'ft', 'm');
+conditions.altitude_m = m_convert.f_length(30000, 'ft', 'm');
 
 %% % Trim de l'avion en col de croisiere
 trim_data = m_trim.f_croisiere(conditions.altitude_m, conditions.tas_mps, ...
