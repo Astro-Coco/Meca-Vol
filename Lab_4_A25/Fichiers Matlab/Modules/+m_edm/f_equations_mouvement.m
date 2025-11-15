@@ -102,7 +102,7 @@ qbar_pa = m_atmos.f_pression_dynamique(tas_mps, altitude_m);
     zcg_m, masse_kg, qbar_pa, fn_n, avion);
 
 %%% Calcul des acceleration de l'avion
-g = 9.80665; % [m/s2] 
+g = 9.81; % [m/s2] 
 % Calcul de u_dot = x_dot(1) et w_dot = x_dot(2)
 x_dot(1) = fx_n / masse_kg - q_radps * wb_mps - g * sin(theta_rad);
 x_dot(2) = fz_n / masse_kg + q_radps * ub_mps + g * cos(theta_rad);
