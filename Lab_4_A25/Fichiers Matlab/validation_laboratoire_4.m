@@ -46,7 +46,7 @@ x0 = [conditions.tas_mps*cos(conditions.alpha_rad), ...
     conditions.theta_rad, conditions.altitude_m];
 
 % Lancement d'une simulation
-[time,x] = m_edm.f_simuler_avion(x0, 50, 1.0, conditions, avion, []);
+[time,x] = m_edm.f_simuler_avion(x0, 50, 0.2, conditions, avion, []);
 
 % Affichage du resultat de la simulation
 figure(); subplot(3, 2, [1 2]);
