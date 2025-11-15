@@ -40,9 +40,9 @@ mach_nb = m_atmos.f_nombre_mach(tas_mps, altitude_m);
 
 
 %%% Initialisation de alpha, dstab et Fn
-alpha_rad = m_convert.f_angle(5, 'deg', 'rad');
+alpha_rad = m_convert.f_angle(4, 'deg', 'rad');
 dstab_rad = 0;
-fn_n = m_convert.f_force(15000, 'lbf', 'N');
+fn_n = m_convert.f_force(36000, 'lbf', 'N');
 
 
 %%% Force de portance et coefficient de portance dans le repère body
@@ -54,8 +54,8 @@ L = masse_kg*g0*cos(alpha_rad) - fn_n*sin(i_m);
 clb = L/(qbar_pa*s_wb);
 
 %%% D?but de la boucle de convergence
-alpha_vect = m_convert.f_angle(-2:1:10, 'deg', 'rad');
-dstab_vect = m_convert.f_angle(-2:1:8, 'deg', 'rad');
+alpha_vect = m_convert.f_angle(-2:0.1:10, 'deg', 'rad');
+dstab_vect = m_convert.f_angle(-8:0.1:8, 'deg', 'rad');
 clb_vect = zeros(size(alpha_vect));
 my_vect = zeros(size(dstab_vect));
 
@@ -63,6 +63,8 @@ my_vect = zeros(size(dstab_vect));
 for j = 1 : 1000
     % Boucle pour trouver alpha_star
     for i = 1 : length(alpha_vect)
+
+        %Calcul de clb pour chaque alpha du vecteurs de tout les alphas possibles
         [cls_tmp, cds_tmp, ~] = m_aero.f_coeff_stabilite(...
             alpha_vect(i), 0, 0, tas_mps, mach_nb, qbar_pa, 0, 0, ...
             dstab_rad, fn_n, avion);
@@ -74,10 +76,13 @@ for j = 1 : 1000
     end
 
     %Nouvel angle alpha pour produire Clb
-    alpha_star = interp1(clb_vect, alpha_vect, clb, 'linear', 'extrap');
+    [clb_sorted, idx_alpha] = sort(clb_vect);
+    alpha_sorted = alpha_vect(idx_alpha);
+    alpha_star = interp1(clb_sorted, alpha_sorted, clb, 'linear', 'extrap');
+
 
     % Coefficient cdb
-    % Assumer alpha_dot = 0 et q_radps = 0 pour le trim?
+    % Assumer alpha_dot = 0 et q_radps = 0 pour le trim
     [cls_tmp, cds_tmp, ~] = m_aero.f_coeff_stabilite(alpha_star, 0, 0, ...
     tas_mps, mach_nb, qbar_pa, 0, 0, dstab_rad, fn_n, avion);
     
@@ -87,7 +92,12 @@ for j = 1 : 1000
     % Estimation de fn_star
     fn_star = (masse_kg*g0*sin(alpha_star) + qbar_pa*s_wb*cdb)/cos(i_m);
 
-    % Boucle pour trouver dstab_star
+    % Motrez l'évolution des itérations
+    fprintf('Iteration %d: alpha = %.6f deg, dstab = %.6f deg, Fn = %.2f N\n', ...
+        j, m_convert.f_angle(alpha_star, 'rad', 'deg'), m_convert.f_angle(dstab_rad, 'rad', 'deg'), fn_star);
+    
+    % Boucle pour trouver dstab_star selon le moment de tangage nul
+    % Itérer sur tous les dstab possibles, et interpoler pour trouver moment nul
     for i = 1:length(dstab_vect)
         [cls_tmp, cds_tmp, cms_tmp] = m_aero.f_coeff_stabilite( ...
             alpha_star, 0, 0, tas_mps, mach_nb, qbar_pa, ...
@@ -101,9 +111,10 @@ for j = 1 : 1000
         my_vect(i) = my_nm_tmp;
     end
 
-    dstab_star = interp1(my_vect, dstab_vect, 0, 'linear', 'extrap');
-    
-
+    %Nouvel dstab pour produire un moment de tangage nul
+    [my_sorted, idx_dstab] = sort(my_vect);
+    dstab_sorted = dstab_vect(idx_dstab);
+    dstab_star = interp1(my_sorted, dstab_sorted, 0, 'linear', 'extrap');
     % Mise à jour des variables
     old_alpha = alpha_rad;
     old_dstab = dstab_rad;
@@ -117,7 +128,7 @@ for j = 1 : 1000
     clb = L/(qbar_pa*s_wb);
 
     % Critère de convergence
-    if abs(alpha_rad - old_alpha) < 1e-6 && abs(dstab_rad - old_dstab) < 1e-6
+    if abs(alpha_rad - old_alpha) < 1e-8 && abs(dstab_rad - old_dstab) < 1e-8
         break;
     end
 

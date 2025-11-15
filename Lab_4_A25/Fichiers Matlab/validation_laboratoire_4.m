@@ -20,11 +20,11 @@ conditions.zcg_m = 0;
 
 % Definition de la condition de vol
 conditions.tas_mps = m_convert.f_velocity(400, 'kts', 'm/s');
-conditions.altitude_m = m_convert.f_length(30000, 'ft', 'm');
+conditions.altitude_m = m_convert.f_length(35000, 'ft', 'm');
 
 %% % Trim de l'avion en col de croisiere
 trim_data = m_trim.f_croisiere(conditions.altitude_m, conditions.tas_mps, ...
-conditions.masse_kg, conditions.xcg_perc, conditions.zcg_m, avion);
+conditions.masse_kg, conditions.xcg_perc, conditions.zcg_m, avion)
 
 %% % Initialisation des parametres de croisiere
 % Configuration des surfaces de controle de l'avion
@@ -46,6 +46,13 @@ x0 = [conditions.tas_mps*cos(conditions.alpha_rad), ...
     conditions.theta_rad, conditions.altitude_m];
 
 % Lancement d'une simulation
+
+mode = 'normal';    % ou '' si tu veux, mais donne quelque chose
+dt   = 0.2;         % même pas de temps que ta simu, par cohérence
+
+xdot0 = m_edm.f_equations_mouvement(0, x0, conditions, avion, mode, dt);
+disp('xdot0 = ');
+disp(xdot0.');
 [time,x] = m_edm.f_simuler_avion(x0, 50, 0.2, conditions, avion, []);
 
 % Affichage du resultat de la simulation
@@ -53,12 +60,12 @@ figure(); subplot(3, 2, [1 2]);
 plot(time, m_convert.f_length(x(:,5), 'm', 'ft')) ; grid on ; box on;
 xlabel('Temps [sec]') ; ylabel('Altitude [ft]');
 set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 50], ...
-    'Ylim', [15000 25000]);
+    'Ylim', [15000 45000]);
 
 subplot(3, 2, 3);
 plot(time, m_convert.f_velocity(x(:,1), 'm/s', 'kts')) ; grid on ; box on;
 set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 50], ...
-    'Ylim', [200 300]) ; ylabel('u_b [m/s]');
+    'Ylim', [200 450]) ; ylabel('u_b [m/s]');
 
 subplot(3, 2, 4);
 plot(time, m_convert.f_velocity(x(:,2), 'm/s', 'kts')) ; grid on ; box on;
