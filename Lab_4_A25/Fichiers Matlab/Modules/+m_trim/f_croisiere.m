@@ -55,8 +55,8 @@ clb = L/(qbar_pa*s_wb);
 
 %%% D?but de la boucle de convergence
 alpha_vect = m_convert.f_angle(-2:1:10, 'deg', 'rad');
-dstab_vect = m_convert.f_angle(-2:1:8, 'deg', 'rad');
 clb_vect = zeros(size(alpha_vect));
+dstab_vect = m_convert.f_angle(-12:1:5, 'deg', 'rad');
 my_vect = zeros(size(dstab_vect));
 
 % Boucle de convergence
