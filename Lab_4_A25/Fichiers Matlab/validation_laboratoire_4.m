@@ -78,4 +78,85 @@ set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 80], ...
 
 
 % 
-altitudes = x[]
+altitudes = m_convert.f_length(10000:2500:35000, 'ft', 'm');
+vitesses = m_convert.f_velocity(450:-25:200, 'kts', 'm/s');
+
+results_matrice = zeros(length(altitudes)*length(vitesses), 3);
+
+
+for i = 1:length(altitudes)
+    for j = 1:length(vitesses)
+        trim_data = m_trim.f_croisiere(altitudes(i), vitesses(j), ...
+            conditions.masse_kg, conditions.xcg_perc, conditions.zcg_m, avion);
+        disp(['Altitude: ', num2str(m_convert.f_length(altitudes(i), 'm', 'ft')), ' ft, Vitesse: ', ...
+            num2str(m_convert.f_velocity(vitesses(j), 'm/s', 'kts')), ' kts --> alpha (deg): ', ...
+            num2str(m_convert.f_angle(trim_data.alpha_rad, 'rad', 'deg')), ...
+            ', dstab (deg): ', num2str(m_convert.f_angle(trim_data.dstab_rad, 'rad', 'deg')), ...
+            ', fn (N): ', num2str(trim_data.fn_n)]);
+
+        index = (i-1)*length(vitesses) + j;
+        results_matrice(index, :) = [trim_data.alpha_rad, trim_data.dstab_rad, trim_data.fn_n];
+    end
+end
+
+%Graphes des résultats de chaque paramètre en fonction de l'altitude et de la vitesse
+%Alpha Graphes
+Na = numel(altitudes);
+Nv = numel(vitesses);
+
+% results_matrice indexed as (i-1)*Nv + j, donc reshape en Nv x Na puis transpose
+alpha_mat = reshape(results_matrice(:,1), Nv, Na)';   % taille [Na x Nv] (lignes=altitudes, colonnes=vitesses)
+dstab_mat = reshape(results_matrice(:,2), Nv, Na)';
+fn_mat    = reshape(results_matrice(:,3), Nv, Na)';
+
+% grilles X (vitesse) et Y (altitude) de même taille [Na x Nv]
+[Vgrid, Hgrid] = meshgrid(vitesses, altitudes);
+
+% conversion unités pour axes et z si souhaité
+V_kts = m_convert.f_velocity(Vgrid, 'm/s', 'kts');
+H_ft  = m_convert.f_length(Hgrid, 'm', 'ft');
+alpha_deg  = m_convert.f_angle(alpha_mat, 'rad', 'deg');
+dstab_deg  = m_convert.f_angle(dstab_mat, 'rad', 'deg');
+
+% surface alpha_trim
+figure;
+surf(V_kts, H_ft, alpha_deg);
+shading interp; colorbar;
+xlabel('V_T (kts)'); ylabel('Altitude (ft)'); zlabel('\alpha_{trim} (deg)');
+title('\alpha_{trim} vs V_T et altitude'); view(45,30);
+
+% surface dstab_trim
+figure;
+surf(V_kts, H_ft, dstab_deg);
+shading interp; colorbar;
+xlabel('V_T (kts)'); ylabel('Altitude (ft)'); zlabel('\delta_{stab,trim} (deg)');
+title('\delta_{stab,trim} vs V_T et altitude'); view(45,30);
+
+% surface Fn_trim
+figure;
+surf(V_kts, H_ft, fn_mat);
+shading interp; colorbar;
+xlabel('V_T (kts)'); ylabel('Altitude (ft)'); zlabel('F_{n,trim} (N)');
+title('F_{n,trim} vs V_T et altitude'); view(45,30);
+
+
+masses = m_convert.f_mass(120000:10000:160000, 'lbm', 'kg');
+xcgs = 0:0.05:0.25;
+
+matrices_deux = zeros(length(masses)*length(xcgs), 3);
+
+for i = 1:length(masses)
+    for j = 1:length(xcgs)
+        trim_data = m_trim.f_croisiere(conditions.altitude_m, conditions.tas_mps, ...
+            masses(i), xcgs(j), conditions.zcg_m, avion);
+        disp(['Masse: ', num2str(m_convert.f_mass(masses(i), 'kg', 'lbm')), ' lbm, Xcg: ', ...
+            num2str(xcgs(j)*100), ' %MAC --> alpha (deg): ', ...
+            num2str(m_convert.f_angle(trim_data.alpha_rad, 'rad', 'deg')), ...
+            ', dstab (deg): ', num2str(m_convert.f_angle(trim_data.dstab_rad, 'rad', 'deg')), ...
+            ', fn (N): ', num2str(trim_data.fn_n)]);
+        index = (i-1)*length(xcgs) + j;
+        matrices_deux(index, :) = [trim_data.alpha_rad, trim_data.dstab_rad, trim_data.fn_n];
+    end
+end
+
+mesh = 
