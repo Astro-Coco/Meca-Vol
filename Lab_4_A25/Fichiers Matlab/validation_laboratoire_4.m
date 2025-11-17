@@ -159,4 +159,44 @@ for i = 1:length(masses)
     end
 end
 
-mesh = 
+alpha_mat = reshape(matrices_deux(:,1), length(xcgs), length(masses))';   % taille [Na x Nv] (lignes=altitudes, colonnes=vitesses)
+dstab_mat = reshape(matrices_deux(:,2), length(xcgs), length(masses))';
+fn_mat    = reshape(matrices_deux(:,3), length(xcgs), length(masses))';
+
+
+% reshape into matrix with rows = masses, cols = xcgs
+alpha_mat = reshape(matrices_deux(:,1), numel(xcgs), numel(masses))';
+dstab_mat = reshape(matrices_deux(:,2), numel(xcgs), numel(masses))';
+fn_mat    = reshape(matrices_deux(:,3), numel(xcgs), numel(masses))';
+
+% create grids matching the reshape: columns = xcgs, rows = masses
+[XCG_grid, MASS_grid] = meshgrid(xcgs, masses);   % size [numel(masses) x numel(xcgs)]
+
+% convert units for plotting
+XCG_pct    = XCG_grid * 100;                                  % %MAC
+MASS_lbm   = m_convert.f_mass(MASS_grid, 'kg', 'lbm');         % lbm
+alpha_deg  = m_convert.f_angle(alpha_mat, 'rad', 'deg');
+dstab_deg  = m_convert.f_angle(dstab_mat, 'rad', 'deg');
+
+
+% surface alpha_trim vs Xcg and mass
+figure;
+surf(XCG_pct, MASS_lbm, alpha_deg);
+shading interp; colorbar;
+xlabel('X_{CG} (% MAC)'); ylabel('Mass (lbm)'); zlabel('\alpha_{trim} (deg)');
+title('\alpha_{trim} vs X_{CG} et Masse'); view(45,30);
+
+% surface dstab_trim
+figure;
+surf(XCG_pct, MASS_lbm, dstab_deg);
+shading interp; colorbar;
+xlabel('X_{CG} (% MAC)'); ylabel('Mass (lbm)'); zlabel('\delta_{stab,trim} (deg)');
+title('\delta_{stab,trim} vs X_{CG} et Masse'); view(45,30);
+
+% surface Fn_trim
+figure;
+surf(XCG_pct, MASS_lbm, fn_mat);
+shading interp; colorbar;
+xlabel('X_{CG} (% MAC)'); ylabel('Mass (lbm)'); zlabel('F_{n,trim} (N)');
+title('F_{n,trim} vs X_{CG} et Masse'); view(45,30);
+% ...existing code...
