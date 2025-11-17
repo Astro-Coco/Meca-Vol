@@ -74,3 +74,8 @@ subplot(3, 2, 6);
 plot(time, m_convert.f_angle(x(:,4), 'rad', 'deg')) ; grid on ; box on;
 set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on', 'Xlim', [0 80], ...
     'Ylim', [0 5]); xlabel('Temps [sec]') ; ylabel('\theta [deg]');
+
+
+
+% 
+altitudes = x[]
