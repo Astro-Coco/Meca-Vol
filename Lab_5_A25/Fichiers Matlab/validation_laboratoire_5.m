@@ -100,11 +100,40 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
 %% Étude d'une perturbation atmosphérique
-temps_simulation = 300;
-open("Lab_5_A25\Fichiers Matlab\AER3640_avion_wind.slx")
+% Vecteur de temps
+t_sim = 0 : 0.1 : 300;
+
+% Paramètres
+V_m = 50;
+t_init = 50;
+t_pert = 10;
+
+% Initialisation du vecteur V_w
+V_w = zeros(size(t_sim));
+
+for i = 1 : length(t_sim)
+    if t_sim(i) <= t_init
+        V_w(i) = 0;
+    elseif t_sim(i) > t_init && t_sim(i) < t_init + t_pert
+        V_w(i) = V_m/2 * (1-cos(pi*(t_sim(i)-t_init)/t_pert));
+    else
+        V_w(i) = V_m;
+    end
+end
+
+% Graphique de l'amplitude de la rafale en fonction du temps
+figure (2); clf;
+plot(t_sim, V_w);
+xlabel('Time (t)');
+ylabel('V_w(t)');
+title('Plot of V_w(t) as a function of time');
+grid on;
+
+% Simulation avec perturbation atmosphérique
+[wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 sim("AER3640_avion_wind", temps_simulation)
 
-figure(1); clf;
+figure(3); clf;
 % Affichage de l'altitude en fonction du temps
 subplot(3, 2, [1 2]);
 plot(positions.time, positions.signals(3).values); grid on; box on;
@@ -116,7 +145,7 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
 subplot(3, 2, 3);
 plot(vitesses.time, vitesses.signals(1).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
-    'Ylim', [350 450]); ylabel('u_b [m/s]');
+    'Ylim', [300 500]); ylabel('u_b [m/s]');
 
 subplot(3, 2, 4);
 plot(vitesses.time, vitesses.signals(3).values); grid on; box on;
@@ -127,7 +156,7 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
 subplot(3, 2, 5);
 plot(euler.time, euler.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
-    'Ylim', [0 5]); xlabel('Temps [sec]'); ylabel('theta [deg]');
+    'Ylim', [-20 25]); xlabel('Temps [sec]'); ylabel('theta [deg]');
 
 subplot(3, 2, 6);
 plot(pqr.time, pqr.signals(2).values); grid on; box on;
