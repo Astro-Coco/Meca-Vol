@@ -40,10 +40,6 @@ function [fx_n, fz_n, my_nm] = f_forces(clb, cdb, cmb, theta_rad, xcg_perc, ...
 % Definition de la constante de gravitee en m/s^2
 g0 = 9.81; 
 
-%%% Données
-s_ht = avion.geom.s_ht;
-s_wb = avion.geom.s_wb;
-
 % Definition des distances du moteur par rapport au centre de gravite de
 % l'avion
 xEngine2Cg = avion.geom.x_m + xcg_perc*avion.geom.c_wb;
@@ -61,10 +57,6 @@ Fm_z = -fn_n*sin(avion.geom.i_m) ;
 Mm_y = Fm_x*zEngine2Cg - Fm_z*xEngine2Cg ;
 
 % 3 -> aerodynamiques
-% Récupérer les variables
-s_ht = avion.geom.s_ht;
-s_wb = avion.geom.s_wb;
-
 Fa_x = -qbar_pa * avion.geom.s_wb * cdb ;
 Fa_z = -qbar_pa * avion.geom.s_wb * clb ;
 Ma_y = qbar_pa*avion.geom.s_wb*cmb*avion.geom.c_wb + Fa_x*zcg_m + Fa_z*(0.25*avion.geom.c_wb - xcg_perc*avion.geom.c_wb);

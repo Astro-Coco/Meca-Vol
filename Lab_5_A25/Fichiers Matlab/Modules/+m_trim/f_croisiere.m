@@ -78,10 +78,10 @@ for j = 1 : 1000
 
     % Coefficient cdb
     % Assumer alpha_dot = 0 et q_radps = 0 pour le trim?
-    [cls_tmp, cds_tmp, ~] = m_aero.f_coeff_stabilite(alpha_star, 0, 0, ...
+    [cls_tmp, cds_tmp, cms_tmp] = m_aero.f_coeff_stabilite(alpha_star, 0, 0, ...
     tas_mps, mach_nb, qbar_pa, 0, 0, dstab_rad, fn_n, avion);
     
-    [~, cdb_tmp, ~] = m_aero.f_stab2body(cls_tmp, cds_tmp, 0, alpha_star);
+    [~, cdb_tmp, ~] = m_aero.f_stab2body(cls_tmp, cds_tmp, cms_tmp, alpha_star);
     cdb = cdb_tmp;
 
     % Estimation de fn_star

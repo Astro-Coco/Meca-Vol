@@ -41,6 +41,7 @@ conditions.q_radps = 0;
 conditions.alpha_rad = trim_data.alpha_rad;
 conditions.theta_rad = conditions.alpha_rad;
 
+
 %% Analyse des modes à partir des équations
 % a)
 alpha_vect = m_convert.f_angle(-2:1:10, 'deg', 'rad');
@@ -64,6 +65,71 @@ zetaph = cds/cls
 %% Préparation de la simulation
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 
-%% Simulation du modele
-temps_simulation = 50;
+%% Simulation en condition d'équilibre
+temps_simulation = 300;
 sim("AER3640_avion_trim", temps_simulation)
+
+figure(1); clf;
+% Affichage de l'altitude en fonction du temps
+subplot(3, 2, [1 2]);
+plot(positions.time, positions.signals(3).values); grid on; box on;
+xlabel('Temps [sec]'); ylabel('Altitude [ft]');
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [25000 40000]);
+
+% Affichage de ub ou wb en fonction du temps
+subplot(3, 2, 3);
+plot(vitesses.time, vitesses.signals(1).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [350 450]); ylabel('u_b [m/s]');
+
+subplot(3, 2, 4);
+plot(vitesses.time, vitesses.signals(3).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [10 25]); ylabel('w_b [m/s]');
+
+% Affichage de theta et q en fonction du temps
+subplot(3, 2, 5);
+plot(euler.time, euler.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [0 5]); xlabel('Temps [sec]'); ylabel('theta [deg]');
+
+subplot(3, 2, 6);
+plot(pqr.time, pqr.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
+
+%% Étude d'une perturbation atmosphérique
+temps_simulation = 300;
+open("Lab_5_A25\Fichiers Matlab\AER3640_avion_wind.slx")
+sim("AER3640_avion_wind", temps_simulation)
+
+figure(1); clf;
+% Affichage de l'altitude en fonction du temps
+subplot(3, 2, [1 2]);
+plot(positions.time, positions.signals(3).values); grid on; box on;
+xlabel('Temps [sec]'); ylabel('Altitude [ft]');
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [25000 40000]);
+
+% Affichage de ub ou wb en fonction du temps
+subplot(3, 2, 3);
+plot(vitesses.time, vitesses.signals(1).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [350 450]); ylabel('u_b [m/s]');
+
+subplot(3, 2, 4);
+plot(vitesses.time, vitesses.signals(3).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [10 25]); ylabel('w_b [m/s]');
+
+% Affichage de theta et q en fonction du temps
+subplot(3, 2, 5);
+plot(euler.time, euler.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [0 5]); xlabel('Temps [sec]'); ylabel('theta [deg]');
+
+subplot(3, 2, 6);
+plot(pqr.time, pqr.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
