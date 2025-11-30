@@ -5,6 +5,9 @@ close all;
 
 %%% Organisation des repertoires
 addpath('Aircraft/', 'Modules/');
+thisFileDir = fileparts(mfilename('fullpath'));
+addpath(fullfile(thisFileDir, 'Aircraft'));
+addpath(fullfile(thisFileDir, 'Modules'));
 %% Debut de vos etudes
 avion = f_loadAircraftData;
 
@@ -63,5 +66,4 @@ zetaph = cds/cls
 
 %% Simulation du modele
 temps_simulation = 50;
-open("Lab_5_A25\Fichiers Matlab\Modules\+m_mdl\AER3640_avion_trim.slx")
-%sim("m_mdl/AER3640_avion_trim.slx", temps_simulation)
+sim("AER3640_avion_trim", temps_simulation)
