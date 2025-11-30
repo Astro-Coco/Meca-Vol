@@ -92,7 +92,7 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
 subplot(3, 2, 5);
 plot(euler.time, euler.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
-    'Ylim', [0 5]); xlabel('Temps [sec]'); ylabel('theta [deg]');
+    'Ylim', [0 5]); xlabel('Temps [sec]'); ylabel('\theta [deg]');
 
 subplot(3, 2, 6);
 plot(pqr.time, pqr.signals(2).values); grid on; box on;
@@ -124,17 +124,17 @@ end
 % Graphique de l'amplitude de la rafale en fonction du temps
 figure (2); clf;
 plot(t_sim, V_w);
-xlabel('Time (t)');
+xlabel('Temps (t)');
 ylabel('V_w(t)');
-title('Plot of V_w(t) as a function of time');
+title('Graphique de V_w(t) en fonction du temps');
 grid on;
 
 % Simulation avec perturbation atmosphérique
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 sim("AER3640_avion_wind", temps_simulation)
 
-figure(3); clf;
 % Affichage de l'altitude en fonction du temps
+figure(3); clf;
 subplot(3, 2, [1 2]);
 plot(positions.time, positions.signals(3).values); grid on; box on;
 xlabel('Temps [sec]'); ylabel('Altitude [ft]');
@@ -156,9 +156,82 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
 subplot(3, 2, 5);
 plot(euler.time, euler.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
-    'Ylim', [-20 25]); xlabel('Temps [sec]'); ylabel('theta [deg]');
+    'Ylim', [-20 25]); xlabel('Temps [sec]'); ylabel('\theta [deg]');
 
 subplot(3, 2, 6);
 plot(pqr.time, pqr.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
+
+% Évolution u_b en fonction de w_b
+figure(4); clf; 
+plot(vitesses.signals(3).values, vitesses.signals(1).values);
+xlabel('w_b');
+ylabel('u_b');
+title('Graphique de u_b en fonction de w_b');
+grid on;
+
+%% Étude d'une perturbation contrôlée
+% Vecteur de temps
+t_sim = 0 : 0.1 : 300;
+
+% Paramètres
+V_m = 0.1745;
+t_init = 10;
+t_pert = 4;
+
+% Initialisation du vecteur V_w
+delev_deg = zeros(size(t_sim));
+
+for i = 1:length(t_sim)
+    if t_sim(i) <= t_init
+        delev_deg(i) = 0;
+    elseif t_sim(i) > t_init && t_sim(i) < t_init + t_pert
+        delev_deg(i) = m_convert.f_angle(V_m * sin(pi/2 * t_sim(i) + pi), 'rad', 'deg');
+    else
+        delev_deg(i) = 0;
+    end
+end
+
+% Graphique de l'amplitude de la rafale en fonction du temps
+figure(5); clf;
+plot(1:0.1:20, delev_deg(1:191));
+xlabel('Temps [sec]');
+ylabel('\delta_{elev} [deg]');
+title('Graphique de \delta_{elev} en fonction du temps');
+grid on;
+
+% Simulation avec perturbation contrôlée
+[wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
+open("Lab_5_A25\Fichiers Matlab\AER3640_avion_elevateur.slx")
+sim("AER3640_avion_elevateur", temps_simulation)
+
+% Affichage de l'altitude en fonction du temps
+figure(6); clf;
+subplot(3, 2, [1 2]);
+plot(positions.time, positions.signals(3).values); grid on; box on;
+xlabel('Temps [sec]'); ylabel('Altitude [ft]');
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [25000 35000]);
+
+% Affichage de ub ou wb en fonction du temps
+subplot(3, 2, 3);
+plot(vitesses.time, vitesses.signals(1).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [350 450]); ylabel('u_b [m/s]');
+
+subplot(3, 2, 4);
+plot(vitesses.time, vitesses.signals(3).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-30 90]); ylabel('w_b [m/s]');
+
+% Affichage de theta et q en fonction du temps
+subplot(3, 2, 5);
+plot(euler.time, euler.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-15 15]); xlabel('Temps [sec]'); ylabel('\theta [deg]');
+
+subplot(3, 2, 6);
+plot(pqr.time, pqr.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-15 15]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
