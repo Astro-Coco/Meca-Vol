@@ -176,7 +176,7 @@ grid on;
 t_sim = 0 : 0.1 : 300;
 
 % Paramètres
-V_m = 0.1745;
+V_m = 10;
 t_init = 10;
 t_pert = 4;
 
@@ -187,7 +187,7 @@ for i = 1:length(t_sim)
     if t_sim(i) <= t_init
         delev_deg(i) = 0;
     elseif t_sim(i) > t_init && t_sim(i) < t_init + t_pert
-        delev_deg(i) = m_convert.f_angle(V_m * sin(pi/2 * t_sim(i) + pi), 'rad', 'deg');
+        delev_deg(i) = V_m * sin((pi*t_sim(i))/2 + pi);
     else
         delev_deg(i) = 0;
     end
@@ -195,15 +195,16 @@ end
 
 % Graphique de l'amplitude de la rafale en fonction du temps
 figure(5); clf;
-plot(1:0.1:20, delev_deg(1:191));
+plot(0:0.1:20, delev_deg(1:201));
 xlabel('Temps [sec]');
 ylabel('\delta_{elev} [deg]');
 title('Graphique de \delta_{elev} en fonction du temps');
 grid on;
 
+delev_deg = m_convert.f_angle(delev_deg, 'deg', 'rad');
+
 % Simulation avec perturbation contrôlée
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
-open("Lab_5_A25\Fichiers Matlab\AER3640_avion_elevateur.slx")
 sim("AER3640_avion_elevateur", temps_simulation)
 
 % Affichage de l'altitude en fonction du temps
@@ -235,3 +236,5 @@ subplot(3, 2, 6);
 plot(pqr.time, pqr.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-15 15]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
+
+%% Problème : etude du comportement dynamique
