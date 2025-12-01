@@ -41,7 +41,6 @@ conditions.q_radps = 0;
 conditions.alpha_rad = trim_data.alpha_rad;
 conditions.theta_rad = conditions.alpha_rad;
 
-
 %% Analyse des modes à partir des équations
 % a)
 alpha_vect = m_convert.f_angle(-2:1:10, 'deg', 'rad');
@@ -69,7 +68,8 @@ zetaph = cds/cls
 temps_simulation = 300;
 sim("AER3640_avion_trim", temps_simulation)
 
-figure(1); clf;
+%%
+figure(1);
 % Affichage de l'altitude en fonction du temps
 subplot(3, 2, [1 2]);
 plot(positions.time, positions.signals(3).values); grid on; box on;
@@ -122,7 +122,7 @@ for i = 1 : length(t_sim)
 end
 
 % Graphique de l'amplitude de la rafale en fonction du temps
-figure (2); clf;
+figure (2);
 plot(t_sim, V_w);
 xlabel('Temps (t)');
 ylabel('V_w(t)');
@@ -134,7 +134,7 @@ grid on;
 sim("AER3640_avion_wind", temps_simulation)
 
 % Affichage de l'altitude en fonction du temps
-figure(3); clf;
+figure(3);
 subplot(3, 2, [1 2]);
 plot(positions.time, positions.signals(3).values); grid on; box on;
 xlabel('Temps [sec]'); ylabel('Altitude [ft]');
@@ -164,7 +164,7 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
 % Évolution u_b en fonction de w_b
-figure(4); clf; 
+figure(4);
 plot(vitesses.signals(3).values, vitesses.signals(1).values);
 xlabel('w_b');
 ylabel('u_b');
@@ -194,7 +194,7 @@ for i = 1:length(t_sim)
 end
 
 % Graphique de l'amplitude de la rafale en fonction du temps
-figure(5); clf;
+figure(5);
 plot(0:0.1:20, delev_deg(1:201));
 xlabel('Temps [sec]');
 ylabel('\delta_{elev} [deg]');
@@ -208,7 +208,7 @@ delev_deg = m_convert.f_angle(delev_deg, 'deg', 'rad');
 sim("AER3640_avion_elevateur", temps_simulation)
 
 % Affichage de l'altitude en fonction du temps
-figure(6); clf;
+figure(6);
 subplot(3, 2, [1 2]);
 plot(positions.time, positions.signals(3).values); grid on; box on;
 xlabel('Temps [sec]'); ylabel('Altitude [ft]');
