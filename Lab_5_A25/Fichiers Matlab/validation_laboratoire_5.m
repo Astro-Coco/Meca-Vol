@@ -238,3 +238,72 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-15 15]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
 %% Problème : etude du comportement dynamique
+
+altitude = 10000:5000:35000;
+altitude_m  = m_convert.f_length(altitude, 'ft', 'm');
+vitesse = 200:40:400;
+
+wn_sp   = zeros(length(altitude), length(vitesse));
+zeta_sp = zeros(length(altitude), length(vitesse));
+wn_ph   = zeros(length(altitude), length(vitesse));
+zeta_ph = zeros(length(altitude), length(vitesse));
+
+for idxAlt =1 : length(altitude_m)
+    for idxVit = 1 : length(vitesse)
+        %calcul de la condition de trim
+        trim_data = m_trim.f_croisiere(altitude_m(idxAlt), vitesse(idxVit), conditions.masse_kg, conditions.xcg_perc, conditions.zcg_m, avion);
+        %Utilisez la fonction f_stabilite
+        % Configuration des surfaces de controle de l'avion
+        conditions.dflaps = 0;
+        conditions.delev_rad = 0;
+        conditions.dstab_rad = trim_data.dstab_rad;
+
+        % Configuration des moteurs
+        conditions.fn_n = trim_data.fn_n;
+
+        % Definition des parametres de vol
+        conditions.q_radps = 0;
+        conditions.alpha_rad = trim_data.alpha_rad;
+        conditions.theta_rad = conditions.alpha_rad;
+
+        [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
+        %Stockage de donnes
+        
+        wn_long   = wn(1:2);
+        zeta_long = zeta(1:2);
+
+        [~, idx_min] = min(wn_long); % phugoïde
+        [~, idx_max] = max(wn_long); % période courte
+
+        wn_sp(idxAlt, idxVit)   = wn_long(idx_max);
+        zeta_sp(idxAlt, idxVit) = zeta_long(idx_max);
+
+        wn_ph(idxAlt, idxVit)   = wn_long(idx_min);
+        zeta_ph(idxAlt, idxVit) = zeta_long(idx_min);
+    end
+end
+
+
+[VV, HH] = meshgrid(vitesse, altitude);
+
+figure;
+subplot(1,2,1);
+surf(VV, HH, wn_sp);
+xlabel('V [m/s]'); ylabel('Altitude [ft]'); zlabel('\omega_{sp} [rad/s]');
+title('Pulsation naturelle - mode short period'); grid on;
+
+subplot(1,2,2);
+surf(VV, HH, zeta_sp);
+xlabel('V [m/s]'); ylabel('Altitude [ft]'); zlabel('\zeta_{sp}');
+title('Amortissement - mode short period'); grid on;
+
+figure;
+subplot(1,2,1);
+surf(VV, HH, wn_ph);
+xlabel('V [m/s]'); ylabel('Altitude [ft]'); zlabel('\omega_{ph} [rad/s]');
+title('Pulsation naturelle - mode phugoïde'); grid on;
+
+subplot(1,2,2);
+surf(VV, HH, zeta_ph);
+xlabel('V [m/s]'); ylabel('Altitude [ft]'); zlabel('\zeta_{ph}');
+title('Amortissement - mode phugoïde'); grid on;
