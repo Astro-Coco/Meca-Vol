@@ -242,6 +242,7 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
 altitude = 10000:5000:35000;
 altitude_m  = m_convert.f_length(altitude, 'ft', 'm');
 vitesse = 200:40:400;
+vitesse = m_convert.f_velocity(vitesse, 'kts', 'm/s');
 
 wn_sp   = zeros(length(altitude), length(vitesse));
 zeta_sp = zeros(length(altitude), length(vitesse));
