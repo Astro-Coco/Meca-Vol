@@ -239,9 +239,10 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
 
 %% Problème : etude du comportement dynamique
 
-altitude = 10000:5000:35000;
+altitude = 10000:5000:35000;            % [ft]
 altitude_m  = m_convert.f_length(altitude, 'ft', 'm');
-vitesse = 200:40:400;
+
+vitesse = 200:40:400;                   % [kts]
 vitesse = m_convert.f_velocity(vitesse, 'kts', 'm/s');
 
 wn_sp   = zeros(length(altitude), length(vitesse));
@@ -251,31 +252,33 @@ zeta_ph = zeros(length(altitude), length(vitesse));
 
 for idxAlt =1 : length(altitude_m)
     for idxVit = 1 : length(vitesse)
-        %calcul de la condition de trim
-        trim_data = m_trim.f_croisiere(altitude_m(idxAlt), vitesse(idxVit), conditions.masse_kg, conditions.xcg_perc, conditions.zcg_m, avion);
-        %Utilisez la fonction f_stabilite
-        % Configuration des surfaces de controle de l'avion
-        conditions.dflaps = 0;
+        % Trim
+        trim_data = m_trim.f_croisiere( ...
+            altitude_m(idxAlt), vitesse(idxVit), ...
+            conditions.masse_kg, conditions.xcg_perc, ...
+            conditions.zcg_m, avion);
+
+        % Surfaces de contrôle
+        conditions.dflaps    = 0;
         conditions.delev_rad = 0;
         conditions.dstab_rad = trim_data.dstab_rad;
 
-        % Configuration des moteurs
-        conditions.fn_n = trim_data.fn_n;
-        conditions.altitude_m   = altitude_m(idxAlt);
-        conditions.tas_mps      = vitesse(idxVit);
-        
-        % Definition des parametres de vol
-        conditions.q_radps = 0;
-        conditions.alpha_rad = trim_data.alpha_rad;
-        conditions.theta_rad = conditions.alpha_rad;
+        % Moteurs
+        conditions.fn_n      = trim_data.fn_n;
+        conditions.altitude_m = altitude_m(idxAlt);
+        conditions.tas_mps    = vitesse(idxVit);
+
+        % Paramètres de vol
+        conditions.q_radps    = 0;
+        conditions.alpha_rad  = trim_data.alpha_rad;
+        conditions.theta_rad  = conditions.alpha_rad;
 
         [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
-        %Stockage de donnes
-        
 
-        wn_sp(idxAlt, idxVit) = wn(2);
+        % Stockage (ligne = altitude, colonne = vitesse)
+        wn_sp(idxAlt,   idxVit) = wn(2);
         zeta_sp(idxAlt, idxVit) = zeta(2);
-        wn_ph(idxAlt, idxVit) = wn(1);
+        wn_ph(idxAlt,   idxVit) = wn(1);
         zeta_ph(idxAlt, idxVit) = zeta(1);
     end
 end
