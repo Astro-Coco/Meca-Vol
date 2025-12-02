@@ -238,68 +238,65 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-15 15]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
 %% Problème : etude du comportement dynamique
-
 altitude = 10000:5000:35000;
-altitude_m  = m_convert.f_length(altitude, 'ft', 'm');
 vitesse = 200:40:400;
 
-wn_sp   = zeros(length(altitude), length(vitesse));
-zeta_sp = zeros(length(altitude), length(vitesse));
-wn_ph   = zeros(length(altitude), length(vitesse));
-zeta_ph = zeros(length(altitude), length(vitesse));
+% Initialisation du storage
+wn_sp2   = zeros(length(altitude), length(vitesse));
+zeta_sp2 = zeros(length(altitude), length(vitesse));
+wn_ph2   = zeros(length(altitude), length(vitesse));
+zeta_ph2 = zeros(length(altitude), length(vitesse));
 
-for idxAlt =1 : length(altitude_m)
+for idxAlt = 1 : length(altitude)
     for idxVit = 1 : length(vitesse)
+        % Configuration des moteurs
+        conditions.fn_n = trim_data.fn_n;
+        conditions.altitude_m   = m_convert.f_length(altitude(idxAlt), 'ft', 'm');
+        conditions.tas_mps = m_convert.f_velocity(vitesse(idxVit), 'kts', 'm/s');
+
         %calcul de la condition de trim
-        trim_data = m_trim.f_croisiere(altitude_m(idxAlt), vitesse(idxVit), conditions.masse_kg, conditions.xcg_perc, conditions.zcg_m, avion);
-        %Utilisez la fonction f_stabilite
+        trim_data = m_trim.f_croisiere(conditions.altitude_m, conditions.tas_mps, conditions.masse_kg, conditions.xcg_perc, conditions.zcg_m, avion);
+        
         % Configuration des surfaces de controle de l'avion
         conditions.dflaps = 0;
         conditions.delev_rad = 0;
         conditions.dstab_rad = trim_data.dstab_rad;
-
-        % Configuration des moteurs
-        conditions.fn_n = trim_data.fn_n;
-        conditions.altitude_m   = altitude_m(idxAlt);
-        conditions.tas_mps      = vitesse(idxVit);
         
         % Definition des parametres de vol
         conditions.q_radps = 0;
         conditions.alpha_rad = trim_data.alpha_rad;
         conditions.theta_rad = conditions.alpha_rad;
 
+        %Utilisez la fonction f_stabilite
         [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
-        %Stockage de donnes
         
-
-        wn_sp(idxAlt, idxVit) = wn(2);
-        zeta_sp(idxAlt, idxVit) = zeta(2);
-        wn_ph(idxAlt, idxVit) = wn(1);
-        zeta_ph(idxAlt, idxVit) = zeta(1);
+        %Stockage de donnes
+        wn_sp2(idxVit, idxAlt) = wn(2);
+        zeta_sp2(idxVit, idxAlt) = zeta(2);
+        wn_ph2(idxVit, idxAlt) = wn(1);
+        zeta_ph2(idxVit, idxAlt) = zeta(1);
     end
 end
 
 
-[VV, HH] = meshgrid(vitesse, altitude);
+[HH, VV] = meshgrid(altitude, vitesse);
 
-figure;
-subplot(1,2,1);
-surf(VV, HH, wn_sp);
-xlabel('V [m/s]'); ylabel('Altitude [ft]'); zlabel('\omega_{sp} [rad/s]');
+figure(7);
+surf(HH, VV, wn_sp2);
+xlabel('Vitesse vraie [m/s]'); ylabel('Altitude [ft]'); zlabel('\omega_{sp} [rad/s]');
 title('Pulsation naturelle - mode short period'); grid on;
 
-subplot(1,2,2);
-surf(VV, HH, zeta_sp);
-xlabel('V [m/s]'); ylabel('Altitude [ft]'); zlabel('\zeta_{sp}');
+figure(8);
+surf(HH, VV, zeta_sp2);
+xlabel('Vitesse vraie [m/s]'); ylabel('Altitude [ft]'); zlabel('\zeta_{sp}');
 title('Amortissement - mode short period'); grid on;
 
-figure;
-subplot(1,2,1);
-surf(VV, HH, wn_ph);
-xlabel('V [m/s]'); ylabel('Altitude [ft]'); zlabel('\omega_{ph} [rad/s]');
+figure(9);
+surf(HH, VV, wn_ph2);
+xlabel('Vitesse vraie [m/s]'); ylabel('Altitude [ft]'); zlabel('\omega_{ph} [rad/s]');
 title('Pulsation naturelle - mode phugoïde'); grid on;
 
-subplot(1,2,2);
-surf(VV, HH, zeta_ph);
-xlabel('V [m/s]'); ylabel('Altitude [ft]'); zlabel('\zeta_{ph}');
+figure(10);
+surf(HH, VV, zeta_ph2);
+xlabel('Vitesse vraie [m/s]'); ylabel('Altitude [ft]'); zlabel('\zeta_{ph}');
 title('Amortissement - mode phugoïde'); grid on;
