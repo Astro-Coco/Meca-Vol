@@ -271,17 +271,11 @@ for idxAlt =1 : length(altitude_m)
         [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
         %Stockage de donnes
         
-        wn_long   = wn(1:2);
-        zeta_long = zeta(1:2);
 
-        [~, idx_min] = min(wn_long); % phugoïde
-        [~, idx_max] = max(wn_long); % période courte
-
-        wn_sp(idxAlt, idxVit)   = wn_long(idx_max);
-        zeta_sp(idxAlt, idxVit) = zeta_long(idx_max);
-
-        wn_ph(idxAlt, idxVit)   = wn_long(idx_min);
-        zeta_ph(idxAlt, idxVit) = zeta_long(idx_min);
+        wn_sp(idxAlt, idxVit) = wn(2);
+        zeta_sp(idxAlt, idxVit) = zeta(2);
+        wn_ph(idxAlt, idxVit) = wn(1);
+        zeta_ph(idxAlt, idxVit) = zeta(1);
     end
 end
 
