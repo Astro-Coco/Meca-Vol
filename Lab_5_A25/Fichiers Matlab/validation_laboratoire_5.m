@@ -260,7 +260,9 @@ for idxAlt =1 : length(altitude_m)
 
         % Configuration des moteurs
         conditions.fn_n = trim_data.fn_n;
-
+        conditions.altitude_m   = altitude_m(idxAlt);
+        conditions.tas_mps      = vitesse(idxVit);
+        
         % Definition des parametres de vol
         conditions.q_radps = 0;
         conditions.alpha_rad = trim_data.alpha_rad;
