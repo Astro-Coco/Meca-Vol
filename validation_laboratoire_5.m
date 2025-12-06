@@ -1,15 +1,16 @@
 %%% Initialisation
+%%% Initialisation
 clc;
 clear;
 close all;
 
 %%% Organisation des repertoires
 addpath('Aircraft/', 'Modules/');
-
-%%%Chargement des données de l'avion
-
+thisFileDir = fileparts(mfilename('fullpath'));
+addpath(fullfile(thisFileDir, 'Aircraft'));
+addpath(fullfile(thisFileDir, 'Modules'));
+%% % Debut de vos etudes
 avion = f_loadAircraftData;
-
 
 %% Definition de la condition de vol
 % Configuration de l'avion (poids/centrage)
