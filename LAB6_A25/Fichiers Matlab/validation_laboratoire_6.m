@@ -281,3 +281,8 @@ grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
+
+
+
+%% % Étude du mouvement latéral
+
