@@ -43,7 +43,8 @@ conditions.q_radps = 0;
 conditions.alpha_rad = trim_data.alpha_rad;
 conditions.theta_rad = conditions.alpha_rad;
 
-%% % Simulation du modèle en conditions de trim
+%% % Partie 1
+%% Simulation du modèle en conditions de trim
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 
 temps_simulation = 300;
@@ -79,7 +80,8 @@ plot(pqr.time, pqr.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
-%% % Analyse du phugoide et du short period
+%% % Partie 2
+%% Analyse du phugoide et du short period
 % Vecteur de temps
 t_sim = 0 : 0.1 : 300;
 
@@ -145,7 +147,7 @@ plot(pqr.time, pqr.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-8 10]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
-%% % Simulation d'un PIO
+%% Simulation d'un PIO
 % Vecteur de temps
 t_sim = 0 : 0.1 : 300;
 
@@ -211,7 +213,7 @@ plot(pqr.time, pqr.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
-%% % Conception d'un système de commande de vol
+%% Conception d'un système de commande de vol
 
 % Linearisation de l'avion autour de la condition de trim
 [~, ~, model] = m_mdl.f_stabilite(conditions, avion)
@@ -229,7 +231,7 @@ Kp = -3.1842;
 
 % Simulation avec perturbation contrôlée
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
-sim("AER3640_ctrl_avion_commande", temps_simulation)
+sim("AER3640_ctrl_avion_commande_longitudinale", temps_simulation)
 
 % Sauvegarde des variables de la simu commande
 positions_CMD = positions;
@@ -284,5 +286,4 @@ legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
 
 
 
-%% % Étude du mouvement latéral
-
+%% % Partie 3
