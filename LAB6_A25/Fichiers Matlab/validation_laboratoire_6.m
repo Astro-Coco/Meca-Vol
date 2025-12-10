@@ -289,6 +289,7 @@ legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
 %% % Partie 3
 %% Analyse du roulis Hollandais de l'avion
 t_sim = 0:0.1:100;
+temps_simulation = 100;
 A = 4;    % deg
 t0 = 10;  % s
 T = 4;    % s
@@ -298,7 +299,7 @@ idx = (t_sim >= t0) & (t_sim <= t0+T); %Indexes correspondants à la perturbatio
 tau = t_sim(idx) - t0; %Temps décalé pour la perturbation
 drudder_deg(idx) = A * sin(2*pi*tau/T); %Remplacer les valeurs dans l'intervalle par la perturbation
 
-drud_rad = m_convert.f_angle(drudder_deg, 'deg', 'rad');
+drudder_rad = m_convert.f_angle(drudder_deg, 'deg', 'rad');
 
 %Figure pour visualiser la perturbation
 figure(8);
@@ -311,33 +312,13 @@ grid on;
 % Trouver les conditions de stabilités comme avant
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 % J'assume le nom du modèle rudder
-sim("AER3640_ctrl_avion_commande_longitudinale", t_sim)
+sim("AER3640_ctrl_avion_commande_longitudinale", temps_simulation)
 
-figure()
-subplot(3, 2, [1 2]); hold on;
-plot(positions.time, positions.signals(3).values(:,1)); grid on; box on;
-xlabel('Temps [sec]'); ylabel('Altitude [ft]');
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+positions_NR = positions;
+vitesses_NR  = vitesses;
+euler_NR     = euler;
+pqr_NR       = pqr;
 
-
-subplot(3, 2, 3); hold on;
-plot(pqr.time, pqr.signals(1).values(:,1)); grid on; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
-xlabel('Temps [sec]'); ylabel('p [deg/s]');
-
-subplot(3, 2, 4); hold on;
-plot(pqr.time, pqr.signals(3).values(:,1)); grid on; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
-xlabel('Temps [sec]'); ylabel('r [deg/s]');
-
-subplot(3, 2, 5); hold on;
-plot(vitesses.time, vitesses.signals(2).values(:,1)); grid on; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on'); ylabel('v_b [kts]');
-
-subplot(3, 2, 6); hold on;
-plot(euler.time, euler.signals(1).values(:,1)); grid on; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
-xlabel('Temps [sec]'); ylabel('\phi [deg]');
 
 
 %% Conception d'un système de commande de vol latéral
@@ -360,32 +341,46 @@ Ki1_lat = -0.7286;
 % Simulation avec perturbation contrôlée
 temps_sim = 0:0.1:100;
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
-sim("AER3640_ctrl_avion_commande_laterale", t_sim)
+sim("AER3640_ctrl_avion_commande_laterale", temps_simulation)
 
 % Sauvegarde des variables de la simu commande contrôlée
+positions_CTL = positions;
+vitesses_CTL  = vitesses;
+euler_CTL     = euler;
+pqr_CTL       = pqr;
 
-figure()
-subplot(3, 2, [1 2]); hold on;
-plot(positions.time, positions.signals(3).values(:,1)); grid on; box on;
+figure(9)
+subplot(3,2,[1 2]); hold on;
+plot(positions_NR.time, positions_NR.signals(3).values(:,1));
+plot(positions_CTL.time, positions_CTL.signals(3).values(:,1));
+grid on; box on;
 xlabel('Temps [sec]'); ylabel('Altitude [ft]');
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+legend('Sans compensateur','Avec compensateur','Location','best');
 
-
-subplot(3, 2, 3); hold on;
-plot(pqr.time, pqr.signals(1).values(:,1)); grid on; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+subplot(3,2,3); hold on;
+plot(pqr_NR.time, pqr_NR.signals(1).values(:,1));
+plot(pqr_CTL.time, pqr_CTL.signals(1).values(:,1));
+grid on; box on;
 xlabel('Temps [sec]'); ylabel('p [deg/s]');
+legend('Sans','Avec','Location','best');
 
-subplot(3, 2, 4); hold on;
-plot(pqr.time, pqr.signals(3).values(:,1)); grid on; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+subplot(3,2,4); hold on;
+plot(pqr_NR.time, pqr_NR.signals(3).values(:,1));
+plot(pqr_CTL.time, pqr_CTL.signals(3).values(:,1));
+grid on; box on;
 xlabel('Temps [sec]'); ylabel('r [deg/s]');
+legend('Sans','Avec','Location','best');
 
-subplot(3, 2, 5); hold on;
-plot(vitesses.time, vitesses.signals(2).values(:,1)); grid on; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on'); ylabel('v_b [kts]');
+subplot(3,2,5); hold on;
+plot(vitesses_NR.time, vitesses_NR.signals(2).values(:,1));
+plot(vitesses_CTL.time, vitesses_CTL.signals(2).values(:,1));
+grid on; box on;
+ylabel('v_b [m/s]');  % ajuste si ton signal est en kts
+legend('Sans','Avec','Location','best');
 
-subplot(3, 2, 6); hold on;
-plot(euler.time, euler.signals(1).values(:,1)); grid on; box on;
-set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+subplot(3,2,6); hold on;
+plot(euler_NR.time, euler_NR.signals(1).values(:,1));
+plot(euler_CTL.time, euler_CTL.signals(1).values(:,1));
+grid on; box on;
 xlabel('Temps [sec]'); ylabel('\phi [deg]');
+legend('Sans','Avec','Location','best');
