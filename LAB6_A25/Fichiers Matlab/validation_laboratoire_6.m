@@ -298,7 +298,7 @@ idx = (t_sim >= t0) & (t_sim <= t0+T); %Indexes correspondants à la perturbatio
 tau = t_sim(idx) - t0; %Temps décalé pour la perturbation
 drudder_deg(idx) = A * sin(2*pi*tau/T); %Remplacer les valeurs dans l'intervalle par la perturbation
 
-drudder_rad = m_convert.f_angle(drudder_deg, 'deg', 'rad');
+drud_rad = m_convert.f_angle(drudder_deg, 'deg', 'rad');
 
 %Figure pour visualiser la perturbation
 figure(8);
@@ -311,7 +311,7 @@ grid on;
 % Trouver les conditions de stabilités comme avant
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 % J'assume le nom du modèle rudder
-sim("AER3640_ctrl_avion_commande_laterale", temps_sim)
+sim("AER3640_ctrl_avion_commande_laterale", t_sim)
 
 figure()
 subplot(3, 2, [1 2]); hold on;
@@ -360,4 +360,4 @@ Ki1_lat = -0.7286;
 % Simulation avec perturbation contrôlée
 temps_sim = 0:0.1:100;
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
-sim("AER3640_ctrl_avion_commande_laterale_controle", temps_sim)
+sim("AER3640_ctrl_avion_commande_laterale", t_sim)
