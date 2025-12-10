@@ -361,3 +361,31 @@ Ki1_lat = -0.7286;
 temps_sim = 0:0.1:100;
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 sim("AER3640_ctrl_avion_commande_laterale", t_sim)
+
+% Sauvegarde des variables de la simu commande contrôlée
+
+figure()
+subplot(3, 2, [1 2]); hold on;
+plot(positions.time, positions.signals(3).values(:,1)); grid on; box on;
+xlabel('Temps [sec]'); ylabel('Altitude [ft]');
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+
+
+subplot(3, 2, 3); hold on;
+plot(pqr.time, pqr.signals(1).values(:,1)); grid on; box on;
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+xlabel('Temps [sec]'); ylabel('p [deg/s]');
+
+subplot(3, 2, 4); hold on;
+plot(pqr.time, pqr.signals(3).values(:,1)); grid on; box on;
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+xlabel('Temps [sec]'); ylabel('r [deg/s]');
+
+subplot(3, 2, 5); hold on;
+plot(vitesses.time, vitesses.signals(2).values(:,1)); grid on; box on;
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on'); ylabel('v_b [kts]');
+
+subplot(3, 2, 6); hold on;
+plot(euler.time, euler.signals(1).values(:,1)); grid on; box on;
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+xlabel('Temps [sec]'); ylabel('\phi [deg]');
