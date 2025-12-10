@@ -12,7 +12,7 @@ addpath(fullfile(thisFileDir, 'Modules'));
 %% % Debut de vos etudes
 avion = f_loadAircraftData;
 
-%% Definition de la condition de vol
+%% % Definition de la condition de vol
 % Definition de la condition de vol
 conditions.tas_mps = m_convert.f_velocity(400, 'kts', 'm/s');
 conditions.altitude_m = m_convert.f_length(30000, 'ft', 'm');
@@ -28,7 +28,7 @@ conditions.zcg_m = 0;
 trim_data = m_trim.f_croisiere(conditions.altitude_m, conditions.tas_mps, ...
 conditions.masse_kg, conditions.xcg_perc, conditions.zcg_m, avion)
 
-%% Initialisation des parametres de croisiere
+%% % Initialisation des parametres de croisiere
 % Configuration des surfaces de controle de l'avion
 conditions.dflaps = 0;
 conditions.delev_rad = 0;
@@ -42,14 +42,12 @@ conditions.q_radps = 0;
 conditions.alpha_rad = trim_data.alpha_rad;
 conditions.theta_rad = conditions.alpha_rad;
 
-%% Préparation de la simulation
+%% % Simulation du modèle en conditions de trim
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 
-%% Simulation en condition d'équilibre
 temps_simulation = 300;
 sim("AER3640_ctrl_avion_trim", temps_simulation)
 
-%%
 figure(1);
 % Affichage de l'altitude en fonction du temps
 subplot(3, 2, [1 2]);
@@ -80,4 +78,129 @@ plot(pqr.time, pqr.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
-    
+%% % Analyse du phugoide et du short period
+% Vecteur de temps
+t_sim = 0 : 0.1 : 300;
+
+% Paramètres
+V_m = 5;
+t_init = 10;
+t_pert = 4;
+
+% Initialisation du vecteur V_w
+delev_deg = zeros(size(t_sim));
+
+for i = 1:length(t_sim)
+    if t_sim(i) <= t_init
+        delev_deg(i) = 0;
+    elseif t_sim(i) > t_init && t_sim(i) < t_init + t_pert
+        delev_deg(i) = V_m * sin((pi*t_sim(i))/2 + pi);
+    else
+        delev_deg(i) = 0;
+    end
+end
+
+% Graphique de l'amplitude de la rafale en fonction du temps
+figure(5);
+plot(t_sim, delev_deg);
+xlabel('Temps [sec]');
+ylabel('\delta_{elev} [deg]');
+title('Graphique de \delta_{elev} en fonction du temps');
+grid on;
+
+delev_deg = m_convert.f_angle(delev_deg, 'deg', 'rad');
+
+% Simulation avec perturbation contrôlée
+[wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
+sim("AER3640_ctrl_avion_elevateur", temps_simulation)
+
+% Affichage de l'altitude en fonction du temps
+figure(6);
+subplot(3, 2, [1 2]);
+plot(positions.time, positions.signals(3).values); grid on; box on;
+xlabel('Temps [sec]'); ylabel('Altitude [ft]');
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [29900 30100]);
+
+% Affichage de ub ou wb en fonction du temps
+subplot(3, 2, 3);
+plot(vitesses.time, vitesses.signals(1).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [395 405]); ylabel('u_b [m/s]');
+
+subplot(3, 2, 4);
+plot(vitesses.time, vitesses.signals(3).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-20 55]); ylabel('w_b [m/s]');
+
+% Affichage de theta et q en fonction du temps
+subplot(3, 2, 5);
+plot(euler.time, euler.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-5 8]); xlabel('Temps [sec]'); ylabel('\theta [deg]');
+
+subplot(3, 2, 6);
+plot(pqr.time, pqr.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-8 10]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
+
+%% % Simulation d'un PIO
+% Vecteur de temps
+t_sim = 0 : 0.1 : 300;
+
+% Paramètres
+V_m = 1;
+T = 103;
+wn_ph = 2*pi/T;
+
+% Initialisation du vecteur V_w
+delev_deg = zeros(size(t_sim));
+
+for i = 1:length(t_sim)
+    delev_deg(i) = V_m * sin(wn_ph*t_sim(i));
+end
+
+% Graphique de l'amplitude de la rafale en fonction du temps
+figure(5);
+plot(t_sim, delev_deg);
+xlabel('Temps [sec]');
+ylabel('\delta_{elev} [deg]');
+title('Graphique de \delta_{elev} en fonction du temps');
+grid on;
+
+delev_deg = m_convert.f_angle(delev_deg, 'deg', 'rad');
+
+% Simulation avec perturbation contrôlée
+[wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
+sim("AER3640_ctrl_avion_elevateur", temps_simulation)
+
+% Affichage de l'altitude en fonction du temps
+figure(6);
+subplot(3, 2, [1 2]);
+plot(positions.time, positions.signals(3).values); grid on; box on;
+xlabel('Temps [sec]'); ylabel('Altitude [ft]');
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [10000 35000]);
+
+% Affichage de ub ou wb en fonction du temps
+subplot(3, 2, 3);
+plot(vitesses.time, vitesses.signals(1).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [0 700]); ylabel('u_b [m/s]');
+
+subplot(3, 2, 4);
+plot(vitesses.time, vitesses.signals(3).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [0 30]); ylabel('w_b [m/s]');
+
+% Affichage de theta et q en fonction du temps
+subplot(3, 2, 5);
+plot(euler.time, euler.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-55 65]); xlabel('Temps [sec]'); ylabel('\theta [deg]');
+
+subplot(3, 2, 6);
+plot(pqr.time, pqr.signals(2).values); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
+
