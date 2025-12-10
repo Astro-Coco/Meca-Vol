@@ -311,7 +311,7 @@ grid on;
 % Trouver les conditions de stabilités comme avant
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 % J'assume le nom du modèle rudder
-sim("AER3640_ctrl_avion_commande_laterale", t_sim)
+sim("AER3640_ctrl_avion_commande_longitudinale", t_sim)
 
 figure()
 subplot(3, 2, [1 2]); hold on;
