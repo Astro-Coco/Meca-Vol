@@ -287,3 +287,22 @@ legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
 
 
 %% % Partie 3
+%% Analyse du roulis Hollandais de l'avion
+
+
+
+%% Conception d'un système de commande de vol latéral
+%open("AER3640_ctrl_avion_commande_laterale.slx");
+
+
+% Gains
+Kv = -0.0266;
+Kp = 2.0893;
+Kr = 1.2067;
+Kph = 9.5022;
+Ki = -7.0334;
+Kv1 = 0.0087;
+Kp1 = 0.2904;
+Kr1 = -2.1597;
+Kph1 = 0.6675;
+Ki1 = -0.7286;
