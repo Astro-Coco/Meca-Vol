@@ -9,6 +9,7 @@ addpath('Aircraft/', 'Modules/');
 thisFileDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(thisFileDir, 'Aircraft'));
 addpath(fullfile(thisFileDir, 'Modules'));
+
 %% % Debut de vos etudes
 avion = f_loadAircraftData;
 
@@ -174,6 +175,12 @@ delev_deg = m_convert.f_angle(delev_deg, 'deg', 'rad');
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
 sim("AER3640_ctrl_avion_elevateur", temps_simulation)
 
+% Sauvegarde des variables de la simu PIO
+positions_PIO = positions;
+vitesses_PIO = vitesses;
+euler_PIO = euler;
+pqr_PIO = pqr;
+
 % Affichage de l'altitude en fonction du temps
 figure(6);
 subplot(3, 2, [1 2]);
@@ -204,3 +211,73 @@ plot(pqr.time, pqr.signals(2).values); grid on; box on;
 set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
+%% % Conception d'un système de commande de vol
+
+% Linearisation de l'avion autour de la condition de trim
+[~, ~, model] = m_mdl.f_stabilite(conditions, avion)
+
+% Interface pour le calcul des gains en longitudinal
+%f_compensateur(conditions, avion);
+
+% Vecteur de temps
+t_sim = 0 : 0.1 : 300;
+
+% Gains
+Kq = -3.7007;
+Ki = 13.8363;
+Kp = -3.1842;
+
+% Simulation avec perturbation contrôlée
+[wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
+sim("AER3640_ctrl_avion_commande", temps_simulation)
+
+% Sauvegarde des variables de la simu commande
+positions_CMD = positions;
+vitesses_CMD = vitesses;
+euler_CMD = euler;
+pqr_CMD = pqr;
+
+% Affichage de l'altitude en fonction du temps
+figure(7);
+subplot(3, 2, [1 2]); hold on;
+plot(positions_PIO.time, positions_PIO.signals(3).values);
+plot(positions_CMD.time, positions_CMD.signals(3).values);
+box on; grid on;
+xlabel('Temps [sec]'); ylabel('Altitude [ft]');
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [10000 35000]);
+legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
+
+% Affichage de ub ou wb en fonction du temps
+subplot(3, 2, 3); hold on;
+plot(vitesses_PIO.time, vitesses_PIO.signals(1).values);
+plot(vitesses_CMD.time, vitesses_CMD.signals(1).values);
+grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [0 700]); ylabel('u_b [m/s]');
+legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
+
+subplot(3, 2, 4); hold on;
+plot(vitesses_PIO.time, vitesses_PIO.signals(3).values);
+plot(vitesses_CMD.time, vitesses_CMD.signals(3).values);
+grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [0 30]); ylabel('w_b [m/s]');
+legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
+
+% Affichage de theta et q en fonction du temps
+subplot(3, 2, 5); hold on;
+plot(euler_PIO.time, euler_PIO.signals(2).values);
+plot(euler_CMD.time, euler_CMD.signals(2).values);
+grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-55 65]); xlabel('Temps [sec]'); ylabel('\theta [deg]');
+legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
+
+subplot(3, 2, 6); hold on;
+plot(pqr_PIO.time, pqr_PIO.signals(2).values);
+plot(pqr_CMD.time, pqr_CMD.signals(2).values);
+grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
+legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
