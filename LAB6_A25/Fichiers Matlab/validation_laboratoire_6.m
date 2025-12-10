@@ -288,21 +288,76 @@ legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
 
 %% % Partie 3
 %% Analyse du roulis Hollandais de l'avion
+t_sim = 0:0.1:100;
+A = 4;    % deg
+t0 = 10;  % s
+T = 4;    % s
 
+drudder_deg = zeros(size(t_sim)); %Vecteur initialisé à zéro pour le signal
+idx = (t_sim >= t0) & (t_sim <= t0+T); %Indexes correspondants à la perturbation
+tau = t_sim(idx) - t0; %Temps décalé pour la perturbation
+drudder_deg(idx) = A * sin(2*pi*tau/T); %Remplacer les valeurs dans l'intervalle par la perturbation
+
+drudder_rad = m_convert.f_angle(drudder_deg, 'deg', 'rad');
+
+%Figure pour visualiser la perturbation
+figure(8);
+plot(t_sim, drudder_deg);
+xlabel('Temps [sec]');
+ylabel('\delta_{rudder} [deg]');
+title('Graphique de \delta_{rudder} en fonction du temps');
+grid on;
+
+% Trouver les conditions de stabilités comme avant
+[wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
+% J'assume le nom du modèle rudder
+sim("AER3640_ctrl_avion_commande_laterale", temps_sim)
+
+figure()
+subplot(3, 2, [1 2]); hold on;
+plot(positions.time, positions.signals(3).values(:,1)); grid on; box on;
+xlabel('Temps [sec]'); ylabel('Altitude [ft]');
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+
+
+subplot(3, 2, 3); hold on;
+plot(pqr.time, pqr.signals(1).values(:,1)); grid on; box on;
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+xlabel('Temps [sec]'); ylabel('p [deg/s]');
+
+subplot(3, 2, 4); hold on;
+plot(pqr.time, pqr.signals(3).values(:,1)); grid on; box on;
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+xlabel('Temps [sec]'); ylabel('r [deg/s]');
+
+subplot(3, 2, 5); hold on;
+plot(vitesses.time, vitesses.signals(2).values(:,1)); grid on; box on;
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on'); ylabel('v_b [kts]');
+
+subplot(3, 2, 6); hold on;
+plot(euler.time, euler.signals(1).values(:,1)); grid on; box on;
+set(gca, 'xminorgrid', 'on', 'yminorgrid', 'on');
+xlabel('Temps [sec]'); ylabel('\phi [deg]');
 
 
 %% Conception d'un système de commande de vol latéral
 %open("AER3640_ctrl_avion_commande_laterale.slx");
 
 
+%Changement de noms de gains pour éviter conflit avec longitudinal
 % Gains
-Kv = -0.0266;
-Kp = 2.0893;
-Kr = 1.2067;
-Kph = 9.5022;
-Ki = -7.0334;
-Kv1 = 0.0087;
-Kp1 = 0.2904;
-Kr1 = -2.1597;
-Kph1 = 0.6675;
-Ki1 = -0.7286;
+Kv_lat = -0.0266;
+Kp_lat = 2.0893;
+Kr_lat = 1.2067;
+Kph_lat = 9.5022;
+Ki_lat = -7.0334;
+Kv1_lat = 0.0087;
+Kp1_lat = 0.2904;
+Kr1_lat = -2.1597;
+Kph1_lat = 0.6675;
+Ki1_lat = -0.7286;
+
+% Simulation avec perturbation contrôlée
+temps_sim = 0:0.1:100;
+[wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
+sim("AER3640_ctrl_avion_commande_laterale_controle", temps_sim)
