@@ -103,7 +103,7 @@ for i = 1:length(t_sim)
 end
 
 % Graphique de l'amplitude de la rafale en fonction du temps
-figure(5);
+figure(2);
 plot(t_sim, delev_deg);
 xlabel('Temps [sec]');
 ylabel('\delta_{elev} [deg]');
@@ -117,7 +117,7 @@ delev_rad = m_convert.f_angle(delev_deg, 'deg', 'rad');
 sim("AER3640_ctrl_avion_elevateur", temps_simulation)
 
 % Affichage de l'altitude en fonction du temps
-figure(6);
+figure(3);
 subplot(3, 2, [1 2]);
 plot(positions.time, positions.signals(3).values); grid on; box on;
 xlabel('Temps [sec]'); ylabel('Altitude [ft]');
@@ -163,7 +163,7 @@ for i = 1:length(t_sim)
 end
 
 % Graphique de l'amplitude de la rafale en fonction du temps
-figure(5);
+figure(4);
 plot(t_sim, delev_deg);
 xlabel('Temps [sec]');
 ylabel('\delta_{elev} [deg]');
@@ -183,7 +183,7 @@ euler_PIO = euler;
 pqr_PIO = pqr;
 
 % Affichage de l'altitude en fonction du temps
-figure(6);
+figure(5);
 subplot(3, 2, [1 2]);
 plot(positions.time, positions.signals(3).values); grid on; box on;
 xlabel('Temps [sec]'); ylabel('Altitude [ft]');
@@ -238,7 +238,7 @@ euler_CMD = euler;
 pqr_CMD = pqr;
 
 % Affichage de l'altitude en fonction du temps
-figure(7);
+figure(6);
 subplot(3, 2, [1 2]); hold on;
 plot(positions_PIO.time, positions_PIO.signals(3).values);
 plot(positions_CMD.time, positions_CMD.signals(3).values);
@@ -310,7 +310,7 @@ end
 drudder_rad = m_convert.f_angle(drudder_deg, 'deg', 'rad');
 
 %Figure pour visualiser la perturbation
-figure(8);
+figure(7);
 plot(t_sim, drudder_deg);
 xlabel('Temps [sec]');
 ylabel('\delta_{rudder} [deg]');
@@ -327,7 +327,7 @@ euler_NR     = euler;
 pqr_NR       = pqr;
 
 % Affichage de l'altitude en fonction du temps
-figure(9);
+figure(8);
 subplot(3, 2, [1 2]);
 plot(positions_NR.time, positions_NR.signals(3).values(:,1)); grid on; box on;
 xlabel('Temps [sec]'); ylabel('Altitude [ft]');
