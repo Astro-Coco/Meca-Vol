@@ -1,5 +1,4 @@
 %%% Initialisation
-%%% Initialisation
 clc;
 clear;
 close all;
@@ -111,7 +110,7 @@ ylabel('\delta_{elev} [deg]');
 title('Graphique de \delta_{elev} en fonction du temps');
 grid on;
 
-delev_deg = m_convert.f_angle(delev_deg, 'deg', 'rad');
+delev_rad = m_convert.f_angle(delev_deg, 'deg', 'rad');
 
 % Simulation avec perturbation contrôlée
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
@@ -171,7 +170,7 @@ ylabel('\delta_{elev} [deg]');
 title('Graphique de \delta_{elev} en fonction du temps');
 grid on;
 
-delev_deg = m_convert.f_angle(delev_deg, 'deg', 'rad');
+delev_rad = m_convert.f_angle(delev_deg, 'deg', 'rad');
 
 % Simulation avec perturbation contrôlée
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
@@ -214,7 +213,6 @@ set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
     'Ylim', [-5 5]); xlabel('Temps [sec]'); ylabel('q [deg/s]');
 
 %% Conception d'un système de commande de vol
-
 % Linearisation de l'avion autour de la condition de trim
 [~, ~, model] = m_mdl.f_stabilite(conditions, avion)
 
@@ -288,16 +286,26 @@ legend('Sans contrôleur', 'Avec contrôleur', 'Location', 'best');
 
 %% % Partie 3
 %% Analyse du roulis Hollandais de l'avion
-t_sim = 0:0.1:100;
-temps_simulation = 100;
-A = 4;    % deg
-t0 = 10;  % s
-T = 4;    % s
+t_sim = 0:0.1:300;
+temps_simulation = 300;
 
-drudder_deg = zeros(size(t_sim)); %Vecteur initialisé à zéro pour le signal
-idx = (t_sim >= t0) & (t_sim <= t0+T); %Indexes correspondants à la perturbation
-tau = t_sim(idx) - t0; %Temps décalé pour la perturbation
-drudder_deg(idx) = A * sin(2*pi*tau/T); %Remplacer les valeurs dans l'intervalle par la perturbation
+% Parametres doublet
+A = 4;    % deg
+t_init = 10;  % s
+t_pert = 4;    % s
+
+% Initialisation du vecteur drudder_deg
+drudder_deg = zeros(size(t_sim));
+
+for i = 1:length(t_sim)
+    if t_sim(i) <= t_init
+        drudder_deg(i) = 0;
+    elseif t_sim(i) > t_init && t_sim(i) < t_init + t_pert
+        drudder_deg(i) = A * sin((pi*t_sim(i))/2 + pi);
+    else
+        drudder_deg(i) = 0;
+    end
+end
 
 drudder_rad = m_convert.f_angle(drudder_deg, 'deg', 'rad');
 
@@ -309,23 +317,52 @@ ylabel('\delta_{rudder} [deg]');
 title('Graphique de \delta_{rudder} en fonction du temps');
 grid on;
 
-% Trouver les conditions de stabilités comme avant
+% Simulation avec perturbation controlee sur rudder
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
-% J'assume le nom du modèle rudder
-sim("AER3640_ctrl_avion_commande_longitudinale", temps_simulation)
+sim("AER3640_ctrl_avion_commande_longitudinale_rudder", temps_simulation)
 
 positions_NR = positions;
 vitesses_NR  = vitesses;
 euler_NR     = euler;
 pqr_NR       = pqr;
 
+% Affichage de l'altitude en fonction du temps
+figure(9);
+subplot(3, 2, [1 2]);
+plot(positions_NR.time, positions_NR.signals(3).values(:,1)); grid on; box on;
+xlabel('Temps [sec]'); ylabel('Altitude [ft]');
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [29500 34000]);
 
+% Affichage de p fonction du temps
+subplot(3, 2, 3);
+plot(pqr_NR.time, pqr_NR.signals(1).values(:,1)); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-8 8]); 
+xlabel('Temps [sec]'); ylabel('p [deg/s]');
+
+% Affichage de r fonction du temps
+subplot(3, 2, 4);
+plot(pqr_NR.time, pqr_NR.signals(3).values(:,1)); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-2 2]); 
+xlabel('Temps [sec]'); ylabel('r [deg/s]');
+
+% Affichage de v_b en fonction du temps
+subplot(3, 2, 5);
+plot(vitesses_NR.time, vitesses_NR.signals(2).values(:,1)); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-9 8]); 
+xlabel('Temps [sec]'); ylabel('v\_b [kts]');
+
+% Affichage de phi en fonction du temps
+subplot(3, 2, 6);
+plot(euler_NR.time, euler_NR.signals(1).values(:,1)); grid on; box on;
+set(gca, 'xminortick', 'on', 'yminortick', 'on', 'Xlim', [0 300], ...
+    'Ylim', [-7 6]);
+xlabel('Temps [sec]'); ylabel('\phi [deg]');
 
 %% Conception d'un système de commande de vol latéral
-%open("AER3640_ctrl_avion_commande_laterale.slx");
-
-
-%Changement de noms de gains pour éviter conflit avec longitudinal
 % Gains
 Kv_lat = -0.0266;
 Kp_lat = 2.0893;
@@ -339,9 +376,9 @@ Kph1_lat = 0.6675;
 Ki1_lat = -0.7286;
 
 % Simulation avec perturbation contrôlée
-temps_sim = 0:0.1:100;
+temps_sim = 0:0.1:300;
 [wn, zeta, model] = m_mdl.f_stabilite(conditions, avion);
-sim("AER3640_ctrl_avion_commande_laterale", temps_simulation)
+sim("AER3640_ctrl_avion_commande_longitudinale_laterale", temps_simulation)
 
 % Sauvegarde des variables de la simu commande contrôlée
 positions_CTL = positions;
@@ -349,38 +386,43 @@ vitesses_CTL  = vitesses;
 euler_CTL     = euler;
 pqr_CTL       = pqr;
 
+% Affichage de l'altitude en fonction du temps
 figure(9)
 subplot(3,2,[1 2]); hold on;
 plot(positions_NR.time, positions_NR.signals(3).values(:,1));
 plot(positions_CTL.time, positions_CTL.signals(3).values(:,1));
 grid on; box on;
 xlabel('Temps [sec]'); ylabel('Altitude [ft]');
-legend('Sans compensateur','Avec compensateur','Location','best');
+legend('Sans contrôleur','Avec contrôleur','Location','best');
 
+% Affichage de p en fonction du temps
 subplot(3,2,3); hold on;
 plot(pqr_NR.time, pqr_NR.signals(1).values(:,1));
 plot(pqr_CTL.time, pqr_CTL.signals(1).values(:,1));
 grid on; box on;
 xlabel('Temps [sec]'); ylabel('p [deg/s]');
-legend('Sans','Avec','Location','best');
+legend('Sans contrôleur','Avec compensateur','Location','best');
 
+% Affichage de r en fonction du temps
 subplot(3,2,4); hold on;
 plot(pqr_NR.time, pqr_NR.signals(3).values(:,1));
 plot(pqr_CTL.time, pqr_CTL.signals(3).values(:,1));
 grid on; box on;
 xlabel('Temps [sec]'); ylabel('r [deg/s]');
-legend('Sans','Avec','Location','best');
+legend('Sans contrôleur','Avec contrôleur','Location','best');
 
+% Affichage de v_b en fonction du temps
 subplot(3,2,5); hold on;
 plot(vitesses_NR.time, vitesses_NR.signals(2).values(:,1));
 plot(vitesses_CTL.time, vitesses_CTL.signals(2).values(:,1));
 grid on; box on;
-ylabel('v_b [m/s]');  % ajuste si ton signal est en kts
-legend('Sans','Avec','Location','best');
+ylabel('v_b [kts]');  % ajuste si ton signal est en kts
+legend('Sans contrôleur','Avec contrôleur','Location','best');
 
+% Affichage de phi en fonction du temps
 subplot(3,2,6); hold on;
 plot(euler_NR.time, euler_NR.signals(1).values(:,1));
 plot(euler_CTL.time, euler_CTL.signals(1).values(:,1));
 grid on; box on;
 xlabel('Temps [sec]'); ylabel('\phi [deg]');
-legend('Sans','Avec','Location','best');
+legend('Sans contrôleur','Avec contrôleur','Location','best');
